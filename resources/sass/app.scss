@@ -1,0 +1,28 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+@import '~@fortawesome/fontawesome-free/css/fontawesome.css';
+@import '~@fortawesome/fontawesome-free/css/brands.css';
+@import '~@fortawesome/fontawesome-free/css/solid.css';
+
+@import '~admin-lte/dist/css/adminlte.css';
+@import '~bootstrap-slider/dist/css/bootstrap-slider.min.css';
+
+.router-link-exact-active , .router-link-active{
+    background-color: red;
+    color: #fff !important;
+}
+
+.passport-photo img{
+    width: 300px;
+    height: 300px;
+    object-fit: contain;
+}
+
+
