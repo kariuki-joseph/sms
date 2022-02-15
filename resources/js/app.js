@@ -16,7 +16,6 @@ import swal from 'sweetalert2';
 import Gate from "./Gate";
 import TableData from './TableData';
 import 'jszip/dist/jszip.min.js';
-import 'sheetjs/dist/sheetjs.min.js';
 import 'select2/dist/css/select2.min.css'
 import 'datatables/media/css/jquery.dataTables.min.css'
 import 'datatables/media/js/jquery.dataTables.min.js'
@@ -78,7 +77,9 @@ Vue.filter('ifNotNull', (input, field)=>{
         }
     }
 });
-
+Vue.filter('formatUpcoming',(up)=>{
+    return (parseInt(up) == 1)?"YES":'NO';
+})
 Vue.filter('titleCase', (text)=>{
 return text.split(" ").map(name=>name.charAt(0).toUpperCase()+name.substr(1, name.length)).join(" ");
 });
@@ -104,21 +105,17 @@ Vue.component('table-header', require('./components/TableHeader.vue').default);
 
 
 let routes=[
+    {path:'/', component:require('./components/Marks.vue').default},
     {path:'/classes', component:require('./components/Classes.vue').default},
-    {path:'/houses', component:require('./components/Houses.vue').default},
     {path:'/profile', component:require('./components/Profile.vue').default},
     {path:'/users', component:require('./components/User.vue').default},
-    {path:'/exams', component:require('./components/Exams.vue').default},
     {path:'/roles', component:require('./components/Roles.vue').default},
     {path:'/settings', component:require('./components/Settings.vue').default},
-    {path:'/subjects', component:require('./components/Subjects.vue').default},
     {path:'/students', component:require('./components/Students.vue').default},
     {path:'/teachers', component:require('./components/Teachers.vue').default},
-    {path:'/user-types', component:require('./components/UserTypes.vue').default},
-    {path:'/staffs', component:require('./components/Staffs.vue').default},
-    {path:'/marks', component:require('./components/Marks.vue').default},
     {path:'/:userType/:id/profile', component:require('./components/Profile.vue').default, name:'profile',props:true},
     {path:'/uploads', component:require('./components/Uploads.vue').default},
+    {path:'/fees', component:require('./components/Fees.vue').default},
     {path:'*', component:require('./components/NotFound.vue').default}
 
 ];
@@ -186,9 +183,6 @@ const app = new Vue({
                 console.log(response);
             }).catch(err=>console.log(err));
          },
-        printme(){
-            window.print();
-        },
         generatePdf(options){
             let data = options.data;
             let columns = Object.keys(data[0]);

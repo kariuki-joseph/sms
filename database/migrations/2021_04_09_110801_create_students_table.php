@@ -24,8 +24,6 @@ class CreateStudentsTable extends Migration
             $table->string('dob');
             $table->string('previous_school');
             $table->string('medical');
-            $table->string('passport_photo');
-            $table->string('birth_certificate');
             $table->string('location');
             $table->timestamps();
         });

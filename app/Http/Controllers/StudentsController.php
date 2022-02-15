@@ -6,6 +6,7 @@ use App\Students;
 use App\Parents;
 use Illuminate\Http\Request;
 use App\Custom\Doc;
+use App\Fees;
 
 class StudentsController extends Controller
 {
@@ -244,14 +245,14 @@ class StudentsController extends Controller
         }
         return $adm;
     }
-
+    
     /**
      * Remove the specified resource from storage.
      *
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Students $students, $id)
+    public function destroy(Students $student, $id)
     {
         // $this->authorize('isAdmin');
 

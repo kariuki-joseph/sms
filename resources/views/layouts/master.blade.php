@@ -35,7 +35,7 @@ scratch. This page gets rid of all links and provides the needed markup only.
     <a href="index3.html" class="brand-link">
       <img src="./img/logo.jpg" alt="SMS Logo" class="brand-image img-circle elevation-3"
            style="opacity: .8">
-      <span class="brand-text font-weight-light">School Management Sys</span>
+      <span class="brand-text font-weight-light">Kilimani School Admin Panel</span>
     </a>
 
     <!-- Sidebar -->
@@ -80,28 +80,9 @@ scratch. This page gets rid of all links and provides the needed markup only.
                     </router-link>
                 </li>
                 <li class="nav-item">
-                    <router-link to="/roles" class="nav-link">
-                    <i class="fas fa-chalkboard-teacher nav-icon"></i>
-                    <p>Roles</p>
-                    </router-link>
-                </li>
-                <li class="nav-item">
-                    <router-link to="/user-types" class="nav-link">
-                    <i class="fas fa-user nav-icon"></i>
-                    <p>User Types</p>
-                    </router-link>
-                </li>
-
-                <li class="nav-item">
                     <router-link to="/uploads" class="nav-link">
                     <i class="fas fa-file-upload nav-icon"></i>
                     <p>Upload Documents</p>
-                    </router-link>
-                </li>
-                <li class="nav-item">
-                    <router-link to="/marks" class="nav-link">
-                    <i class="fas fa-book-open nav-icon"></i>
-                    <p>Marks</p>
                     </router-link>
                 </li>
                 <li class="nav-item">
@@ -122,60 +103,26 @@ scratch. This page gets rid of all links and provides the needed markup only.
                 </router-link>
             </li>
             <li class="nav-item">
-                <router-link to="/houses" class="nav-link">
-                <i class="nav-icon fas fa-building white"></i>
-                <p>
-                    Houses
-                </p>
-                </router-link>
-            </li>
-            <li class="nav-item">
-                <router-link to="/exams" class="nav-link">
-                <i class="nav-icon fas fa-book white"></i>
-                <p>
-                    Exams
-                </p>
-                </router-link>
-            </li>
-
-            <li class="nav-item">
-                <router-link to="/subjects" class="nav-link">
-                <i class="nav-icon fas fa-book-open white"></i>
-                <p>
-                    Subjects
-                </p>
-                </router-link>
-            </li>
-            <li class="nav-item">
                 <router-link to="/students" class="nav-link">
                 <i class="nav-icon fas fa-user-graduate white"></i>
                 <p>
-                    Students Enrollment
+                    Students
                 </p>
                 </router-link>
-            </li>
-            <li class="nav-item has-treeview">
-                <a href="#" class="nav-link">
-                <i class="nav-icon fas fa-user-nurse green"></i>
-                <p>
-                    Staff
-                    <i class="right fas fa-angle-left"></i>
-                </p>
-                </a>
-                <ul class="nav nav-treeview">
-                    <li class="nav-item">
-                        <router-link to="/staffs" class="nav-link">
-                        <i class="fas fa-user nav-icon"></i>
-                        <p>All Staffs</p>
-                        </router-link>
-                    </li>
-                </ul>
             </li>
             <li class="nav-item">
                 <router-link to="/teachers" class="nav-link">
                 <i class="nav-icon fas fa-chalkboard-teacher white"></i>
                 <p>
                     Teachers
+                </p>
+                </router-link>
+            </li>
+            <li class="nav-item">
+                <router-link to="/fees" class="nav-link">
+                <i class="nav-icon fas fa-briefcase white"></i>
+                <p>
+                    Fees
                 </p>
                 </router-link>
             </li>

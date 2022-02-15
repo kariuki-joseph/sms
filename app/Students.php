@@ -25,6 +25,10 @@ class Students extends Model
         return $this->hasOne(Parents::class, 'student_id', 'id');
     }
 
+    public function fees(){
+        return $this->hasMany(Fees::class, 'adm_number', 'id');
+    }
+
     public function documents(){
         return $this->morphMany(Documents::class, 'documentable');
     }

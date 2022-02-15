@@ -15,20 +15,7 @@ Auth::routes();
 Route::get('/','HomeController@index');
 Route::get('home', 'HomeController@index')->name('home');
 Route::get('/documents', 'DocumentsController@index');
-Route::get('houses', 'HousesController@index');
-Route::post('houses', 'HousesController@store');
-Route::get('houses/{id}', 'HousesController@show');
-Route::post('houses/{id}/update', 'HousesController@update');
-Route::post('houses/{id}/delete', 'HousesController@destroy');
-Route::get('houses/find', 'HousesController@find');
-Route::get('houses/download-pdf', 'HousesController@downloadPdf');
-Route::get('houses/download-excel', 'HousesController@downloadExcel');
-Route::get('houses/download-csv', 'HousesController@downloadCsv');
-Route::get('houses/count', function(){ return \App\Houses::count();});
-Route::get('houses/pdf', function(){
-    $houses = \App\Houses::all();
-    return view('downloads.houses', compact('houses'));
-});
+
 
 Route::get('classes', 'ClassesController@index');
 Route::post('classes', 'ClassesController@store');
@@ -129,42 +116,32 @@ Route::get('settings/pdf', function(){
 Route::get('students', 'StudentsController@index');
 Route::post('students', 'StudentsController@store');
 Route::get('students/last-adm', 'StudentsController@getLastAdm');
+Route::get('students/fees','FeesController@paymentInfo');
+Route::get('students/{id}/fees','FeesController@showFees');
+Route::get('students/{id}/fees/{payable_id}','FeesController@showPaymentSummary');
+Route::get('students/{id}/fees/{payable_id}/sum','FeesController@getTotal');
+Route::get('students/find', 'StudentsController@find');
+Route::get('students/count', function(){ return \App\Students::count();});
 Route::get('students/{id}', 'StudentsController@show');
 Route::post('students/{id}/update', 'StudentsController@update');
-Route::post('students/{id}/delete', 'StudentsController@destroy');
-Route::get('students/find', 'StudentsController@find');
-Route::get('students/download-pdf', 'StudentsController@downloadPdf');
-Route::get('students/download-excel', 'StudentsController@downloadExcel');
-Route::get('students/download-csv', 'StudentsController@downloadCsv');
-Route::get('students/count', function(){ return \App\Students::count();});
-Route::get('students/pdf', function(){
-    $students = \App\Students::all();
-    return view('downloads.students', compact('students'));
-});
+Route::delete('students/{id}/delete', 'StudentsController@destroy');
 
 
 Route::get('teachers', 'TeachersController@index');
 Route::post('teachers', 'TeachersController@store');
+Route::get('teachers/find', 'TeachersController@find');
 Route::get('teachers/{id}', 'TeachersController@show');
 Route::post('teachers/{id}/update', 'TeachersController@update');
 Route::post('teachers/{id}/delete', 'TeachersController@destroy');
-Route::get('teachers/find', 'TeachersController@find');
-Route::get('teachers/download-pdf', 'TeachersController@downloadPdf');
-Route::get('teachers/download-excel', 'TeachersController@downloadExcel');
-Route::get('teachers/download-csv', 'TeachersController@downloadCsv');
-Route::get('teachers/count', function(){ return \App\Teachers::count();});
-Route::get('teachers/pdf', function(){
-    $teachers = \App\Teachers::all();
-    return view('downloads.teachers', compact('teachers'));
-});
+
 
 
 Route::get('user_types', 'UserTypeController@index');
 Route::post('user_types', 'UserTypeController@store');
+Route::get('user_types/find', 'UserTypeController@find');
 Route::get('user_types/{id}', 'UserTypeController@show');
 Route::post('user_types/{id}/update', 'UserTypeController@update');
 Route::post('user_types/{id}/delete', 'UserTypeController@destroy');
-Route::get('user_types/find', 'UserTypeController@find');
 Route::get('user_types/download-pdf', 'UserTypeController@downloadPdf');
 Route::get('user_types/download-excel', 'UserTypeController@downloadExcel');
 Route::get('user_types/download-csv', 'UserTypeController@downloadCsv');
@@ -215,9 +192,18 @@ Route::get('marks/pdf', function(){
     return view('downloads.marks', compact('marks'));
 });
 
+Route::get('payables','PayableController@index');
+Route::get('payables/{id}', 'PayableController@show');
+Route::post('payables','PayableController@store');
+Route::post('payables/{id}/update','PayableController@edit');
+Route::post('payables/{id}/delete','PayableController@delete');
+
+Route::get('fees', 'FeesController@index');
+Route::get('fees/summary', 'FeesController@summary');
+Route::get('fees/{id}', 'FeesController@show');
+Route::post('fees/{id}/update','FeesController@edit');
+Route::post('fees/{id}/delete', 'FeesController@destroy');
 
 Route::post('uploads', 'UploadsController@index');
 
 Route::post('logs', 'LogsController@store');
-
-Route::get('{path}','HomeController@index')->where('path', '([A-z\d-/_.]+)?' );

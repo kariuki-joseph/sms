@@ -196,73 +196,7 @@
                       <div class="row">
                         <div class="col-12">
                             <div class="table-responsive p-0" style="height: 300px;">
-                                <table class="table table-head-fixed text-nowrap">
-                                <thead>
-                                    <tr>
-                                    <th>Qty</th>
-                                    <th>Product</th>
-                                    <th>Serial No.</th>
-                                    <th>Date Received</th>
-                                    <th>Subtotal</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                    <td>1</td>
-                                    <td>Fees Term 1 2020</td>
-                                    <td>1000PSD2</td>
-                                    <td>24-04-2021</td>
-                                    <td>Ksh. 300</td>
-                                    </tr>
-                                    <tr>
-                                    <td>1</td>
-                                    <td>Fees Term 1 2020</td>
-                                    <td>1000PSD2</td>
-                                    <td>24-04-2021</td>
-                                    <td>Ksh. 300</td>
-                                    </tr>
-                                    <tr>
-                                    <td>1</td>
-                                    <td>Fees Term 1 2020</td>
-                                    <td>1000PSD2</td>
-                                    <td>24-04-2021</td>
-                                    <td>Ksh. 300</td>
-                                    </tr>
-                                    <tr>
-                                    <td>1</td>
-                                    <td>Fees Term 1 2020</td>
-                                    <td>1000PSD2</td>
-                                    <td>24-04-2021</td>
-                                    <td>Ksh. 300</td>
-                                    </tr>
-                                    <tr>
-                                    <td>1</td>
-                                    <td>Fees Term 1 2020</td>
-                                    <td>1000PSD2</td>
-                                    <td>24-04-2021</td>
-                                    <td>Ksh. 300</td>
-                                    </tr><tr>
-                                    <td>1</td>
-                                    <td>Fees Term 1 2020</td>
-                                    <td>1000PSD2</td>
-                                    <td>24-04-2021</td>
-                                    <td>Ksh. 300</td>
-                                    </tr>
-                                    <tr>
-                                    <td>1</td>
-                                    <td>Fees Term 1 2020</td>
-                                    <td>1000PSD2</td>
-                                    <td>24-04-2021</td>
-                                    <td>Ksh. 300</td>
-                                    </tr><tr>
-                                    <td>1</td>
-                                    <td>Fees Term 1 2020</td>
-                                    <td>1000PSD2</td>
-                                    <td>24-04-2021</td>
-                                    <td>Ksh. 300</td>
-                                    </tr>
-                                </tbody>
-                                </table>
+                                <student-payments :adm="user.adm_number" v-if="user.adm_number"/>
                             </div>
                             <!-- /.card-body -->
                             <!-- /.card -->
@@ -311,7 +245,9 @@
 
 
 <script>
+import StudentPayments from './StudentPayments.vue'
     export default {
+  components: { StudentPayments },
         data(){
             return {
                  form: new Form({
@@ -324,13 +260,12 @@
                     photo: '',
                     doc: ''
                 }),
-                user:"",
+                user:{},
             }
         },
         mounted() {
 
         },
-
         methods:{
             getUserProfilePic(docs){
                 if(docs == '' || null)return '/img/user.png';

@@ -6,19 +6,19 @@ export default class Gate{
     }
 
     isAdmin(){
-        return this.user.type === 'admin';
+        return this.user.user_type === 'admin';
     }
 
     isAuthor(){
-        return this.user.type === 'author';
+        return this.user.user_type === 'author';
     }
 
     isUser(){
-        return this.user.type === 'user';
+        return this.user.user_type === 'user';
     }
 
     isAdminOrAuthor(){
-     if(this.user.type === 'user' || this.user.type === 'author'){
+     if(this.user.user_type === 'user' || this.user.user_type === 'author'){
         return true;
         };
     }

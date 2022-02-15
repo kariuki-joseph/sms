@@ -18,8 +18,7 @@ class ClassesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request){
-        $count =  $request->rec_count;
-        return Classes::latest()->with('classTeacher')->paginate($count ? $count : 10);
+        return Classes::with('classTeacher')->latest()->paginate(20);
     }
 
     /**
