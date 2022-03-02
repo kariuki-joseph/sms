@@ -105,7 +105,7 @@ Vue.component('table-header', require('./components/TableHeader.vue').default);
 
 
 let routes=[
-    {path:'/', component:require('./components/Marks.vue').default},
+    {path:'/', component:require('./components/Students.vue').default},
     {path:'/classes', component:require('./components/Classes.vue').default},
     {path:'/profile', component:require('./components/Profile.vue').default},
     {path:'/users', component:require('./components/User.vue').default},

@@ -60,6 +60,7 @@ class StudentsController extends Controller
             'location'=>'required',
             'previous_school'=>'required|min:5|max:191',
         ]);
+        
         $admission_class = collect($request->class)->get('name');
         $class_id = \App\Classes::where('name','=',$admission_class)->get('id')->first()->id;
         $adm_number = $this->getLastAdm();

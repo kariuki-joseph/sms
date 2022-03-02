@@ -503,7 +503,7 @@ import TableHeader from './TableHeader.vue';
                 this.form.post('students')
                 .then((response)=>{
                     Fire.$emit('afterCreate::students');
-                    //creaate a new log of this
+                    //create a new log of this
                     this.$parent.createLog("Created a new record:"+JSON.stringify(response.data.last_record));
                     $('#addNew').modal('hide');
 
