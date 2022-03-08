@@ -30,15 +30,6 @@
                                             data-toggle="tab"
                                             >Payment Details</a
                                         >
-                                    </li> 
-                                    <li class="nav-item">
-                                        <a
-                                            class="nav-link"
-                                            href="#pay_summary"
-                                            data-toggle="tab"
-                                        >
-                                            Payments Summary</a
-                                        >
                                     </li>
                                     <li class="nav-item">
                                         <a
@@ -64,11 +55,6 @@
                                         <payable-fees/>
                                     </div>
                                     <!-- /.tab-pane -->
-                                    <div class="tab-pane" id="pay_summary">
-                                        <payment-summary :feesInfo="feesSummary" :payables="payables" :classes="classes"/>
-                                    <!-- /.row -->
-                                    </div>
-                                    <!-- /.tab-pane -->
                                 </div>
                                 <!-- /.tab-content -->
                             </div>
@@ -89,10 +75,9 @@
 
 <script>
 import PayableFees from './PayableFees.vue';
-import PaymentSummary from './PaymentSummary.vue';
 import PaymentDetails from './PaymentDetails.vue';
 export default {
-  components: { PayableFees, PaymentSummary,PaymentDetails },
+  components: { PayableFees, PaymentDetails },
     data() {
         return {
             payables: [],

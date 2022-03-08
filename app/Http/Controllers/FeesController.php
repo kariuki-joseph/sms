@@ -37,11 +37,6 @@ class FeesController extends Controller
         return $students;
     }
     
-    public function summary(){
-        return Students::with(['class','fees'=>function($query){
-                    $query->select('*');
-                },'fees.payable'])->get();
-    }
     public function showFees(Fees $fees, $id){
         $res =  $fees->where('adm_number',$id)->with('payable:id,name')->latest()->get();
         return $res;
