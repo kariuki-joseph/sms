@@ -17,43 +17,18 @@
                                     <div class="col-md-12">
                                         <div class="card">
                                             <div class="card-header">
-                                                <div class="row">
-                                                    <div class="container">
-                                                        <h3 class="card-title">{{ count }} Settings Records</h3>
-                                                    </div>
-                                                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                <button class="btn btn-success" @click="addNew()"><i class="fa fa-cog fa-sm"></i> Create </button>
-                                                        </div>
-                                                        <!-- <div class="col-sm-2 col-md-2 col-lg-2">
-                                                                <p class="tec font-weight-bold">Show:
-                                                                    <select name="records" @change="updateRecordsToShow">
-                                                                            <option v-for="record in records" :key="record">{{ record }}</option>
-                                                                    </select>
-                                                                </p>
-                                                        </div> -->
-
-                                                        <div class="col-sm-4 col-md-4 col-lg-4">
-
-                                                        </div>
-
-                                                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                                            <div class="input-group input-group-sm my-2">
-                                                                <input class="form-control" @keyup="searchSettings" type="search" placeholder="Search" aria-label="Search" v-model="search">
-                                                            </div>
-                                                        </div>
-
-                                                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                                            <button class="btn btn-secondary" data-toggle="modal" data-target="#modalExportOptions"><i class="fas fa-file-export fa-fw"></i> Export As </button>
-                                                        </div>
-
-                                                </div>
+                                                <table-header 
+                                                    :title="'School Information'" 
+                                                    :icon="`fas fa-cog fa-fw`" 
+                                                    :icon_text="'New Settings'"
+                                                    @openModal="addNew()"
+                                                />
                                             </div>
                                         <!-- /.card-header -->
                                             <div class="card-body table-responsive p-0">
                                                 <table class="table table-hover" id="table_settings">
                                                     <thead>
                                                         <tr>
-                                                            <th>ID</th>
                                                             <th>School Name</th>
                                                             <th>School Motto</th>
                                                             <th>School Vission</th>
@@ -61,43 +36,38 @@
                                                             <th>Email Address</th>
                                                             <th>Post Office Address</th>
                                                             <th>Phone No.</th>
-                                                    </tr>
+                                                            <th>Modify</th>
+                                                        </tr>
 
                                                     </thead>
-                                                <tbody>
+                                                    <tbody>
 
 
-                                                <tr v-for="record in settings.data" :key="record.id">
+                                                    <tr v-for="record in settings.data" :key="record.id">
+                                                        <td>{{record.sch_name}}</td>
+                                                        <td>{{record.sch_motto}}</td>
+                                                        <td>{{record.sch_vission}}</td>
+                                                        <td>{{record.sch_mission}}</td>
+                                                        <td>{{record.email}}</td>
+                                                        <td>{{ record.po_address}}</td>
+                                                        <td>{{ record.phone}}</td>
 
-                                                    <td>{{ record.id}}</td>
-                                                    <td>{{record.sch_name}}</td>
-                                                    <td>{{record.sch_motto}}</td>
-                                                    <td>{{record.sch_vission}}</td>
-                                                    <td>{{record.sch_mission}}</td>
-                                                    <td>{{record.email}}</td>
-                                                    <td>{{ record.po_address}}</td>
-                                                    <td>{{ record.phone}}</td>
+                                                        <td>
+                                                            <a href="#" @click="editModal(record)">
+                                                                <i class="fa fa-edit blue"></i>
+                                                            </a>
+                                                            /
+                                                            <a href="#" @click="deleteSettings(record.id)">
+                                                                <i class="fa fa-trash red"></i>
+                                                            </a>
 
-                                                    <td>
-                                                        <a href="#" @click="editModal(record)">
-                                                            <i class="fa fa-edit blue"></i>
-                                                        </a>
-                                                        /
-                                                        <a href="#" @click="deleteSettings(record.id)">
-                                                            <i class="fa fa-trash red"></i>
-                                                        </a>
-
-                                                    </td>
-                                                </tr>
-                                                </tbody></table>
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
                                             </div>
                                         <!-- /.card-body -->
-                                        <!-- <div class="card-footer">
-                                            <pagination :data="settings"
-                                            @pagination-change-page="getResults"
-                                            ></pagination>
-                                        </div> -->
-                                        </div>
+                                         </div>
                                         <!-- /.card -->
                                     </div>
                                 </div>
@@ -209,7 +179,10 @@
     </div>
 
             <!--export options modal-->
-            <export-options-modal @pdfGen="generatePdf" @excelGen="generateExcel"  @csvGen="generateCsv"></export-options-modal>
+            <export-options-modal 
+            @pdfGen="generatePdf" 
+            @excelGen="generateExcel"  
+            @csvGen="generateCsv"/>
             <!--/ export options modal-->
     </div>
 
@@ -219,6 +192,7 @@
 
 <script>
 import ExportOptionsModal from './ExportOptionsModal.vue';
+import TableHeader  from "./TableHeader";
     export default {
         components:{
             ExportOptionsModal

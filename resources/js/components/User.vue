@@ -4,40 +4,16 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                <div class="row">
-                    <div class="container">
-                        <h3 class="card-title">{{ count }} user records</h3>
-                    </div>
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                <button class="btn btn-success" @click="addNew()"><i class="fas fa-users fa-fw"></i> Add New </button>
-                        </div>
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p class="tec font-weight-bold">Show:
-                                    <select name="records" @change="updateRecordsToShow">
-                                            <option v-for="record in records" :key="record">{{ record }}</option>
-                                    </select>
-                                </p>
-                        </div>
-
-                        <div class="col-sm-4 col-md-4 col-lg-4">
-
-                        </div>
-
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                            <div class="input-group input-group-sm my-2">
-                                <input class="form-control" @keyup="searchUsers" type="search" placeholder="Search" aria-label="Search" v-model="search">
-                            </div>
-                        </div>
-
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                            <button class="btn btn-secondary" data-toggle="modal" data-target="#modalExportOptions"><i class="fas fa-file-export fa-fw"></i> Export As </button>
-                        </div>
-
-                </div>
+                  <table-header 
+                        :title="'Users Records'" 
+                        :icon="`fas fa-users fa-fw`" 
+                        :icon_text="'Add New'"
+                        @openModal="addNew()"
+                    />
               </div>
               <!-- /.card-header -->
               <div class="card-body table-responsive p-0">
-                <table class="table table-hover" id="table_user">
+                <table class="table table-hover" id="table_users">
                     <thead>
                         <tr>
                             <th>ID</th>
@@ -71,11 +47,6 @@
                 </tbody></table>
               </div>
               <!-- /.card-body -->
-              <div class="card-footer">
-                  <pagination :data="users"
-                  @pagination-change-page="getResults"
-                  ></pagination>
-              </div>
             </div>
             <!-- /.card -->
           </div>
@@ -112,13 +83,13 @@
                     </div>
 
                      <div class="form-group">
-                        <select v-model="form.type" name="type" id="type" class="form-control" :class="{'is-invalid': form.errors.has('type')}">
+                        <select v-model="form.user_type" name="user_type" id="user_type" class="form-control" :class="{'is-invalid': form.errors.has('user_type')}">
                             <option value="">Select User Role</option>
                             <option value="admin">Admin</option>
                             <option value="user">Standard User</option>
                             <option value="author">Author</option>
                         </select>
-                        <has-error :form="form" field="type"></has-error>
+                        <has-error :form="form" field="user_type"></has-error>
                     </div>
 
                     <div class="form-group">
@@ -142,7 +113,11 @@
     </div>
 
             <!--export options modal-->
-            <export-options-modal @pdfGen="generatePdf" @excelGen="generateExcel"  @csvGen="generateCsv"></export-options-modal>
+            <export-options-modal
+                @pdfGen="generatePdf" 
+                @excelGen="generateExcel"  
+                @csvGen="generateCsv"
+            />
             <!--/ export options modal-->
     </div>
 </template>
@@ -163,7 +138,7 @@ import ExportOptionsModal from './ExportOptionsModal.vue';
                     name:'',
                     email:'',
                     password:'',
-                    type:'',
+                    user_type:'',
                     bio:'',
                     photo:'',
                 }),
@@ -175,20 +150,20 @@ import ExportOptionsModal from './ExportOptionsModal.vue';
         methods: {
             generatePdf(){
             Fire.$emit('generatePdf', {
-                data: new TableData("#table_user"),
+                data: new TableData("#table_users"),
                 filename:'users.pdf',
             });
             },
             generateExcel(){
                 Fire.$emit('generateExcel',{
-                    table: '#table_user',
+                    table: '#table_users',
                     filename: 'users.xlsx'
                 });
 
             },
             generateCsv(){
                 Fire.$emit('generateCsv', {
-                    table: '#table_user',
+                    table: '#table_users',
                     filename: 'users.csv'
                 })
             },
