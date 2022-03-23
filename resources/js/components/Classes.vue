@@ -4,62 +4,12 @@
             <div class="col-md-12">
                 <div class="card">
                     <div class="card-header">
-                        <div class="row">
-                            <div class="container">
-                                <h3 class="card-title">
-                                    {{ count }} class records
-                                </h3>
-                            </div>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <button
-                                    class="btn btn-success"
-                                    @click="addNew()"
-                                >
-                                    <i class="fas fa-school fa-fw"></i> Add New
-                                </button>
-                            </div>
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p class="tec font-weight-bold">
-                                    Show:
-                                    <select
-                                        name="records"
-                                        @change="updateRecordsToShow"
-                                    >
-                                        <option
-                                            v-for="record in records"
-                                            :key="record"
-                                            >{{ record }}</option
-                                        >
-                                    </select>
-                                </p>
-                            </div>
-
-                            <div class="col-sm-4 col-md-4 col-lg-4"></div>
-
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <div class="input-group input-group-sm my-2">
-                                    <input
-                                        class="form-control"
-                                        @keyup="searchClasses"
-                                        type="search"
-                                        placeholder="Search"
-                                        aria-label="Search"
-                                        v-model="search"
-                                    />
-                                </div>
-                            </div>
-
-                            <div class="col-sm-2 col-md-2 col-lg-2">
-                                <button
-                                    class="btn btn-secondary"
-                                    data-toggle="modal"
-                                    data-target="#modalExportOptions"
-                                >
-                                    <i class="fas fa-file-export fa-fw"></i>
-                                    Export As
-                                </button>
-                            </div>
-                        </div>
+                        <table-header 
+                            :title="'Class Records'" 
+                            :icon="`fas fa-school fa-fw`" 
+                            :icon_text="'Add New'"
+                            @openModal="addNew()"
+                        />
                     </div>
                     <!-- /.card-header -->
                     <div class="card-body table-responsive p-0">
@@ -73,44 +23,10 @@
                                     <th>Modify</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <tr
-                                    v-for="_class in classes.data"
-                                    :key="_class.id"
-                                >
-                                    <td>{{ _class.id }}</td>
-                                    <td>{{ _class.name }}</td>
-                                    <td>{{ _class.capacity }}</td>
-                                    <td>
-                                        {{
-                                            _class.class_teacher == null
-                                                ? "Not Yet Assigned"
-                                                : _class.class_teacher.name
-                                        }}
-                                    </td>
-                                    <td>
-                                        <a href="#" @click="editModal(_class)">
-                                            <i class="fa fa-edit blue"></i>
-                                        </a>
-                                        /
-                                        <a
-                                            href="#"
-                                            @click="deleteClass(_class.id)"
-                                        >
-                                            <i class="fa fa-trash red"></i>
-                                        </a>
-                                    </td>
-                                </tr>
-                            </tbody>
+                            <tbody></tbody>
                         </table>
                     </div>
                     <!-- /.card-body -->
-                    <div class="card-footer">
-                        <pagination
-                            :data="classes"
-                            @pagination-change-page="getClasses"
-                        ></pagination>
-                    </div>
                 </div>
                 <!-- /.card -->
             </div>
@@ -262,7 +178,7 @@
             @pdfGen="generatePdf"
             @excelGen="generateExcel"
             @csvGen="generateCsv"
-        ></export-options-modal>
+        />
         <!--/ export options modal-->
     </div>
 </template>
@@ -287,7 +203,8 @@ export default {
             }),
             search: "",
             active_record_count: 10,
-            records: this.$parent.records
+            records: this.$parent.records,
+            dataTable:''
         };
     },
     methods: {
@@ -486,6 +403,46 @@ export default {
         Fire.$on("recordCountChange:classes", () => {
             this.loadClasses();
         });
+    },
+    mounted(){
+        this.dataTable = $("#table_classes").DataTable({
+            processing:true,
+            retrieve:true,
+            select:true,
+            pageLength:25,
+            scrollY:'500px',
+            ajax:{
+                type:'GET',
+                url:'classes',
+                dataSrc: function(data){
+                    let i, _class, resp=[];
+                    for(i=0; i<data.length; i++){
+                        _class = data[i];
+                        resp.push({
+                            id:_class.id,
+                            name:_class.name,
+                            capacity:_class.capacity,
+                            classTeacher:(_class.class_teacher != null)? _class.class_teacher.name:'Not yet assigned',
+                            modify:`<a href="#" onClick="editModal(${_class})">
+                                        <i class="fa fa-edit blue"></i>
+                                    </a>
+                                         /
+                                    <a href="#" onClick="deleteClass(${_class.id})">
+                                        <i class="fa fa-trash red"></i>
+                                    </a>`
+                        })
+                    }
+                    return resp;
+                }
+            },
+            columns:[
+                {data: 'id'},
+                {data:'name'},
+                {data:'capacity'},
+                {data:'classTeacher'},
+                {data:'modify'}
+            ]
+        })
     }
 };
 </script>

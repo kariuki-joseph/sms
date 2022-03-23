@@ -18,7 +18,7 @@ class ClassesController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request){
-        return Classes::with('classTeacher')->latest()->paginate(20);
+        return Classes::with('classTeacher')->latest()->get();
     }
 
     /**
