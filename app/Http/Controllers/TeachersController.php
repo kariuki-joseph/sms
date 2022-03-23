@@ -14,12 +14,7 @@ class TeachersController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request){
-        if($request->tag && $request->tag == 'available'){
-            return Teachers::all(['id','name']);
-        }
-
-        $count =  $request->rec_count;
-        return Teachers::latest()->paginate($count ? $count : 10);
+        return Teachers::all();
     }
 
     /**

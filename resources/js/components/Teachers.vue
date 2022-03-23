@@ -3,37 +3,12 @@
         <div class="row mt-5" v-if="$gate.isAdmin()">
           <div class="col-md-12">
             <div class="card">
-              <div class="card-header">
-                  <div class="row">
-                    <div class="container">
-                        <h3 class="card-title">{{ count }} teachers records</h3>
-                    </div>
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                <button class="btn btn-success" @click="addNew()"><i class="fas fa-chalkboard-teacher fa-fw"></i> Add New </button>
-                        </div>
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p class="tec font-weight-bold">Show:
-                                    <select name="records" @change="updateRecordsToShow">
-                                            <option v-for="record in records" :key="record">{{ record }}</option>
-                                    </select>
-                                </p>
-                        </div>
-
-                        <div class="col-sm-4 col-md-4 col-lg-4">
-
-                        </div>
-
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                            <div class="input-group input-group-sm my-2">
-                                <input class="form-control" @keyup="searchTeachers" type="search" placeholder="Search" aria-label="Search" v-model="search">
-                            </div>
-                        </div>
-
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                            <button class="btn btn-secondary" data-toggle="modal" data-target="#modalExportOptions"><i class="fas fa-file-export fa-fw"></i> Export As </button>
-                        </div>
-                </div>
-              </div>
+              <table-header 
+                    :title="'Teachers Records'" 
+                    :icon="`fas fa-chalkboard-teacher fa-fw`" 
+                    :icon_text="'Add New'"
+                    @openModal="addNew()"
+                />
               <!-- /.card-header -->
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover" id="table_teachers">
@@ -47,33 +22,10 @@
                     </tr>
 
                     </thead>
-                  <tbody>
-
-
-                  <tr v-for="teacher in teachers.data" :key="teacher.id">
-                    <td>{{ teacher.id}}</td>
-                    <td>{{teacher.name}}</td>
-                    <td>{{teacher.email}}</td>
-                    <td>{{teacher.phone}}</td>
-                     <td>
-                        <a href="#" @click="editModal(teacher)">
-                            <i class="fa fa-edit blue"></i>
-                        </a>
-                        /
-                        <a href="#" @click="deleteTeacher(teacher.id)">
-                            <i class="fa fa-trash red"></i>
-                        </a>
-
-                    </td>
-                  </tr>
-                </tbody></table>
+                    <tbody></tbody>
+                </table>
               </div>
               <!-- /.card-body -->
-              <div class="card-footer">
-                  <pagination :data="teachers"
-                  @pagination-change-page="getTeachers"
-                  ></pagination>
-              </div>
             </div>
             <!-- /.card -->
           </div>
@@ -131,7 +83,7 @@
             </div>
 
             <!--export options modal-->
-           <export-options-modal @pdfGen="generatePdf" @excelGen="generateExcel"  @csvGen="generateCsv"></export-options-modal>
+           <export-options-modal @pdfGen="generatePdf" @excelGen="generateExcel"  @csvGen="generateCsv"/>
             <!--/ export options modal-->
     </div>
 
@@ -141,11 +93,13 @@
 
 <script>
 import ExportOptionsModal from './ExportOptionsModal.vue';
+import TableHeader from './TableHeader.vue';
 
     export default {
         components:{
             ExportOptionsModal
         },
+        
         data() {
             return {
                 editMode:false,
@@ -160,6 +114,7 @@ import ExportOptionsModal from './ExportOptionsModal.vue';
                 search: '',
                 active_record_count: 10,
                 records:this.$parent.records,
+                dataTable:''
             }
         },
         methods: {
@@ -309,6 +264,47 @@ import ExportOptionsModal from './ExportOptionsModal.vue';
             });
             Fire.$on('recordCountChange:teachers',()=>{
                 this.loadTeachers();
+            })
+        },
+        mounted(){
+            this.dataTable = $("#table_teachers").DataTable({
+                processing:true,
+                select:true,
+                pageLength:25,
+                scrollY:'500px',
+                ajax:{
+                    type:'GET',
+                    url:'teachers',
+                    dataSrc: function(data){
+                        let i,teacher, resp=[];
+                        for(i=0; i<data.length; i++){
+                            teacher = data[i];
+                            resp.push({
+                                id:teacher.id,
+                                name:teacher.name,
+                                email: teacher.email,
+                                phone: teacher.phone,
+                                modify:`
+                                    <a href="#" @click="editModal(${teacher})">
+                                        <i class="fa fa-edit blue"></i>
+                                    </a>
+                                    /
+                                    <a href="#" @click="deleteTeacher(${teacher.id})">
+                                        <i class="fa fa-trash red"></i>
+                                    </a>
+                                `
+                            })
+                        }
+                        return resp
+                    }
+                },
+                columns:[
+                    {data:'id'},
+                    {data: 'name'},
+                    {data: 'email'},
+                    {data: 'phone'},
+                    {data: 'modify'}
+                ]
             })
         }
 
