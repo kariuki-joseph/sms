@@ -17,12 +17,13 @@ class StudentsController extends Controller
      */
     public function index(Request $request){
         //$this->authorize('isAdmin');
-        if($request->rec_count == 'all'){
-            return Students::with(['class', 'parents'])->latest()->paginate(Students::count());
-        }else{
-            $count =  $request->rec_count;
-            return Students::with(['class', 'parents'])->latest()->paginate($count ? $count : 10);
-        }
+        return Students::with(['class', 'parents'])->latest()->get();
+        // if($request->rec_count == 'all'){
+        //     return Students::with(['class', 'parents'])->latest()->paginate(Students::count());
+        // }else{
+        //     $count =  $request->rec_count;
+        //     return Students::with(['class', 'parents'])->latest()->paginate($count ? $count : 10);
+        // }
 
     }
 

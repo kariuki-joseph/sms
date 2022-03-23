@@ -4,10 +4,12 @@
             <div class="row mt-5" v-if="$gate.isAdmin()">
                 <div class="col-md-12">
                     <div class="card">
-                        <table-header :title="`${count} Students Records`" :icon="`fas fa-graduation-cap fa-fw`" :icon_text="'Add New'"
+                        <table-header 
+                            :title="'Students'" 
+                            :icon="`fas fa-graduation-cap fa-fw`" 
+                            :icon_text="'Add New'"
                             @openModal="addNew()"
-                            @msearching="searchStudents"
-                            @recordsCountChanged="updateRecordsToShow"></table-header>
+                        />
                     <!-- /.card-header -->
                         <div class="card-body table-responsive p-0">
                             <table class="table table-hover table-head-fixed text-nowrap " id="table_students">
@@ -21,24 +23,8 @@
                                         </tr>
 
                                 </thead>
-                            <tbody>
-                            <tr v-for="student in students.data" :key="student.id">
-                                <td>{{student.id}}</td>
-                                <td><router-link :to="{path:'/students/'+student.id+'/profile'}">{{student.name}}</router-link></td>
-                                <td>{{student.adm_number}}</td>
-                                <td v-if="student.class">{{student.class.name}}</td>
-                                <td>
-                                    <a href="#" @click="editModal(student)">
-                                        <i class="fa fa-edit blue"></i>
-                                    </a>
-                                    /
-                                    <a href="#" @click="deleteStudent(student.id)">
-                                        <i class="fa fa-trash red"></i>
-                                    </a>
-
-                                </td>
-                            </tr>
-                            </tbody></table>
+                                <tbody></tbody>
+                            </table>
                         </div>
                     <!-- /.card-body -->
                     <div class="card-footer">
@@ -310,7 +296,8 @@ import TableHeader from './TableHeader.vue';
                 search: '',
                 next_adm_no: '',
                 active_student_count: 10,
-                records:this.$parent.records
+                records:this.$parent.records,
+                dataTable:''
             }
         },
         methods: {
@@ -548,24 +535,52 @@ import TableHeader from './TableHeader.vue';
             }
         },
         created() {
-            this.loadStudents();
-            Fire.$on('afterCreate::students',()=>{
-                this.loadStudents();
-            });
-            Fire.$on('searching:students',()=>{
-                let q = this.search;
-                axios.get('students/find?q='+q+'&rec_count='+this.active_student_count)
-                .then(resp=>{
-                    //create a log
-                 this.$parent.createLog("Searched for: "+q+" in the Students table");
-                    this.students = resp.data;
-                });
-            });
-            Fire.$on('studentCountChange:students',()=>{
-                this.loadStudents();
-            });
+            // this.$nextTick(()=>this.dataTable.ajax.url.load())
+            // console.log("datatable",this.dataTable)
+            // // this.dataTable.ajax.url('kkkdkd').load();
+            },
+        mounted(){
+            this.dataTable=$("#table_students").DataTable({
+                "processing":true,
+                "select":true,
+                "retrieve":true,
+                "pageLength":"25",
+                "scrollY":"500px",
+                "ajax":{
+                    "type":"GET",
+                    "url":"students",
+                    "dataSrc":function(data){
+                        let i,student,resp = [];
+                        for(i=0; i<data.length; i++){
+                            student=data[i];
+                            resp.push({
+                                'id':student.id,
+                                'name':`<a href="#/students/${student.id}/profile">${student.name}</a>`,
+                                'adm_number':student.adm_number,
+                                'className':student.class.name,
+                                'modify':`<a href="#" onClick="editModal(${student})">
+                                        <i class="fa fa-edit blue"></i>
+                                        </a>
+                                         /
+                                    <a href="#" onClick="deleteStudent(${student.id})">
+                                        <i class="fa fa-trash red"></i>
+                                    </a>`
+                            })
+                        }
+                        return resp
+                    }
+                },
+                "columns":[
+                    {"data":"id"},
+                    {"data":"name"},
+                    {"data":"adm_number"},
+                    {"data":"className"},
+                    {"data":"modify"}
+                ]
 
-        },
+            })
+
+},
         watch:{
             '$route' (to, from){
                 //shift in url params
