@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Logs;
+use App\Log;
 use Illuminate\Http\Request;
 
 class LogsController extends Controller
@@ -35,38 +35,24 @@ class LogsController extends Controller
      */
     public function store(Request $request)
     {
-        $userType  = auth()->user()->type;
+        $userType  = auth()->user()->type ?auth()->user()->type : 'user';
         $userId = auth()->user()->id;
 
-        $log = new Logs();
+        $log =  new Log();
         $log->user_id = $userId;
         $log->user_type = $userType;
         $log->activity = $request->activity;
         $log->save();
 
-        return response()->json(['message'=>'Log has been created successfully. ']);
-    }
-
-    //creating logs for activites
-    public function createlog($activity){
-        $userType  = auth()->user()->type;
-        $userId = auth()->user()->id;
-
-        $log = new Logs();
-        $log->user_id = $userId;
-        $log->user_type = $userType;
-        $log->activity = $activity;
-        $log->save();
-
-        return response()->json(['message'=>'Log has been created successfully. ']);
+        return response()->json(['message'=>'Log has been created successfully. ','data'=>$log]);
     }
     /**
      * Display the specified resource.
      *
-     * @param  \App\Logs  $logs
+     * @param  \App\Log  $logs
      * @return \Illuminate\Http\Response
      */
-    public function show(Logs $logs)
+    public function show(Log $logs)
     {
         //
     }
@@ -74,10 +60,10 @@ class LogsController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Logs  $logs
+     * @param  \App\Log  $logs
      * @return \Illuminate\Http\Response
      */
-    public function edit(Logs $logs)
+    public function edit(Log $logs)
     {
         //
     }
@@ -86,10 +72,10 @@ class LogsController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Logs  $logs
+     * @param  \App\Log  $logs
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Logs $logs)
+    public function update(Request $request, Log $logs)
     {
         //
     }
@@ -97,10 +83,10 @@ class LogsController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Logs  $logs
+     * @param  \App\Log  $logs
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Logs $logs)
+    public function destroy(Log $logs)
     {
         //
     }
