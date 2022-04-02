@@ -9,6 +9,9 @@
                             :icon="`fas fa-graduation-cap fa-fw`" 
                             :icon_text="'Add New'"
                             @openModal="addNew()"
+                            @pdfGen="generatePdf" 
+                            @excelGen="generateExcel"  
+                            @csvGen="generateCsv"
                         />
                     <!-- /.card-header -->
                         <div class="card-body table-responsive p-0">
@@ -167,7 +170,7 @@
                             </div>
                         </section>
 
-                        <section id="section_parents_father" style="display:none;">
+                        <section id="section_parents_father" style="display:none;" v-if="form.parents">
                             <div class="form-group text-lg">
                                 <label>Father's Information</label>
                             </div>
@@ -186,7 +189,7 @@
                             </div>
                         </section>
 
-                        <section id="section_parents_mother" style="display:none;">
+                        <section id="section_parents_mother" style="display:none;" v-if="form.parents">
                             <div class="form-group text-lg">
                                 <label for="">Mother's Information</label>
                             </div>
@@ -205,7 +208,7 @@
                             </div>
                         </section>
 
-                        <section id="section_parents_guardian" style="display:none;">
+                        <section id="section_parents_guardian" style="display:none;" v-if="form.parents">
                             <div class="form-group text-lg">
                                 <label for="">Guardian's Information</label>
                             </div>
@@ -225,32 +228,26 @@
                         </section>
                         </div>
                         <div class="d-flex justify-content-between">
-                                <button v-show="registration.isFirstSection" type="button" class="btn btn-danger ml-3 mb-3" data-dismiss="modal"><i class="fa fa-window-close"></i> Cancel {{ editMode ? "":"Registration"}}</button>
+                                <button v-show="registration.isFirstSection" type="button" class="btn btn-danger ml-3 mb-3" data-dismiss="modal"><i class="fa fa-window-close"></i> Cancel {{ editMode ? "Editing":"Registration"}}</button>
                                 <button @click="previous()" v-show="!registration.isFirstSection" type="button" class="btn btn-danger ml-3 mb-3"><i class="fa fa-arrow-circle-left"></i> Back</button>
                                 <div>
-                                    <button type="submit" v-show="editMode" class="btn btn-success mr-3 mb-3"><i class="fa fa-edit"></i> Update</button>
-                                    <button @click="next()"  type="button" v-show="!editMode && !registration.isComplete" class="btn btn-primary mr-3 mb-3"><i class="fa fa-arrow-circle-right"></i> Next</button>
+                                    <button @click="next()"  type="button" v-show="(!editMode || editMode) && !registration.isComplete" class="btn btn-primary mr-3 mb-3"><i class="fa fa-arrow-circle-right"></i> Next</button>
                                     <button  type="submit" v-show="!editMode && registration.isComplete" class="btn btn-primary mr-3 mb-3"><i class="fa fa-paper-plane"></i> Submit</button>
+                                    <button type="submit" v-show="editMode && registration.isComplete" class="btn btn-success mr-3 mb-3"><i class="fa fa-edit"></i> Update</button>
                                 </div>
                         </div>
                     </form>
             </div>
         </div>
         </div>
-
-        <!--export options modal-->
-       <export-options-modal @pdfGen="generatePdf" @excelGen="generateExcel"  @csvGen="generateCsv"></export-options-modal>
-        <!--/ export options modal-->
     </div>
 </template>
 
 <script>
-import ExportOptionsModal from './ExportOptionsModal.vue';
 import TableHeader from './TableHeader.vue';
 
     export default {
         components:{
-            ExportOptionsModal,
             TableHeader
         },
         data() {
@@ -268,7 +265,7 @@ import TableHeader from './TableHeader.vue';
                         '#section_parents_mother',
                         '#section_parents_guardian'
                     ],
-                    activeSection:"",
+                    activeSection:"#section_bio",
                     nextSection:"",
                     previousSection:"",
                     isComplete: false,
@@ -291,7 +288,15 @@ import TableHeader from './TableHeader.vue';
                     passport_photo:'',
                     birth_certificate:'',
                     class: {},
-                    parents:{},
+                    parents:{
+                        father_name:'',
+                        father_contact:'',
+                        mother_name:'',
+                        mother_contact:'',
+                        guardian_name:'',
+                        guardian_contact:''
+
+                    },
                 }),
                 search: '',
                 next_adm_no: '',
@@ -303,6 +308,7 @@ import TableHeader from './TableHeader.vue';
         methods: {
             next(){
                 //next registration section
+                this.registration.isFirstSection = false;
                 if(this.registration.isFirstSection){
                     //first page of registration
                     this.registration.activeSection = this.registration.sections[0];
@@ -316,17 +322,14 @@ import TableHeader from './TableHeader.vue';
                     }
                 }
 
-    //automatically move to the next section if already in the first section
-    let selection = this.registration.isFirstSection ? this.registration.nextSection : this.registration.activeSection;
-    this.registration.isFirstSection = false;
+                //automatically move to the next section if already in the first section
+                $("#addNew").find("section").not(this.registration.activeSection).hide();
+                $("#addNew").find(this.registration.activeSection).show();
 
-        $("#addNew").find("section").not(selection).hide();
-        $("#addNew").find(selection).show();
-
-   console.log(this.registration.activeSection);
             },
             previous(){
                 //previous registration section
+                this.registration.isComplete = false;
                 if(this.registration.sections.indexOf(this.registration.activeSection) == 0){
                     //first page
                     this.registration.isFirstSection = true;
@@ -337,7 +340,7 @@ import TableHeader from './TableHeader.vue';
                     this.registration.activeSection = this.registration.sections[this.registration.sections.indexOf(this.registration.activeSection)-1];
                 }
 
-                this.registration.isComplete = false;
+                
 
                 $("#addNew").find("section").not(this.registration.activeSection).hide();
                 $("#addNew").find(this.registration.activeSection).show();
@@ -448,8 +451,6 @@ import TableHeader from './TableHeader.vue';
                 $('#addNew').modal({
                     backdrop:'static'
                 });
-                this.registration.activeSection = this.registration.sections[0];
-                this.registration.nextSection = this.registration.sections[1];
             },
             updateStudent(id){
                 this.$Progress.start();
@@ -465,7 +466,7 @@ import TableHeader from './TableHeader.vue';
                         'Information has been updated!',
                         'success'
                     );
-                    Fire.$emit('afterCreate::students');
+                    Fire.$emit('afterCreate:students');
                 }).catch(err=>{
                     this.$Progress.fail();
                     console.log(err);
@@ -474,22 +475,26 @@ import TableHeader from './TableHeader.vue';
             },
             loadStudents(){
                 if (this.$gate.isAdmin()) {
-                    return (
-                        axios.get('students?rec_count='+this.active_student_count).then((resp)=>{
-                            this.students = resp.data;
-                            this.count = resp.data.total;
-                            return new Promise((resolve, reject)=>resolve(resp));
-                        })),
+                    // return (
+                    //     axios.get('students?rec_count='+this.active_student_count).then((resp)=>{
+                    //         this.students = resp.data;
+                    //         this.count = resp.data.total;
+                    //         return new Promise((resolve, reject)=>resolve(resp));
+                    //     })),
+                    
+                    
                     // this.getstudentsCount(),
                     this.getNewAdmissionNumber(),
                     this.getAvailableClasses();
+                    //load students via datatables ajax
+                    this.dataTable?this.dataTable.ajax.reload():''
                 }
             },
             createStudent(){
                 this.$Progress.start();
                 this.form.post('students')
                 .then((response)=>{
-                    Fire.$emit('afterCreate::students');
+                    Fire.$emit('afterCreate:students');
                     //create a new log of this
                     this.$parent.createLog("Created a new record:"+JSON.stringify(response.data.last_record));
                     $('#addNew').modal('hide');
@@ -520,13 +525,13 @@ import TableHeader from './TableHeader.vue';
                          if (result.value) {
                                 this.form.delete('students/'+id+'/delete').then((resp)=>{
                                     //create a log
-                                    this.$parent.createLog("Deleted a record :"+resp.data.deleted_record);
+                                    this.$parent.createLog("Deleted a record :"+JSON.stringify(resp.data.deleted_record));
                                         Swal.fire(
                                         'Deleted!',
                                         'Your file has been deleted.',
                                         'success'
                                         )
-                                    Fire.$emit('afterCreate::students');
+                                    Fire.$emit('afterCreate:students');
                                 }).catch(()=> {
                                     Swal.fire("Failed!", "There was something wrong.", "warning");
                                 });
@@ -538,6 +543,9 @@ import TableHeader from './TableHeader.vue';
             // this.$nextTick(()=>this.dataTable.ajax.url.load())
             // console.log("datatable",this.dataTable)
             // // this.dataTable.ajax.url('kkkdkd').load();
+            Fire.$on('afterCreate:students',()=>{
+                this.loadStudents();
+            })
             },
         mounted(){
             this.dataTable=$("#table_students").DataTable({
@@ -550,6 +558,7 @@ import TableHeader from './TableHeader.vue';
                     "type":"GET",
                     "url":"students",
                     "dataSrc":function(data){
+                        // return console.log(data)
                         let i,student,resp = [];
                         for(i=0; i<data.length; i++){
                             student=data[i];
@@ -557,12 +566,12 @@ import TableHeader from './TableHeader.vue';
                                 'id':student.id,
                                 'name':`<a href="#/students/${student.id}/profile">${student.name}</a>`,
                                 'adm_number':student.adm_number,
-                                'className':student.class.name,
-                                'modify':`<a href="#" onClick="editModal(${student})">
+                                'className':student.class?student.class.name:"Not Found",
+                                'modify':`<a class="btn-edit" data-info='${JSON.stringify(student)}'>
                                         <i class="fa fa-edit blue"></i>
                                         </a>
                                          /
-                                    <a href="#" onClick="deleteStudent(${student.id})">
+                                    <a class="btn-delete" data-info='${student.id}'>
                                         <i class="fa fa-trash red"></i>
                                     </a>`
                             })
@@ -578,7 +587,25 @@ import TableHeader from './TableHeader.vue';
                     {"data":"modify"}
                 ]
 
-            })
+            });
+
+//bind edit and delete to vue instance
+const Parent = this;
+$("#table_students tbody").on('click','tr td a', function(){
+    if($(this).hasClass('btn-edit')){
+        let data = JSON.parse($(this).attr('data-info'));
+        //fill form with data and edit
+        console.log(data)
+        Parent.form.fill(data);
+        Parent.editMode = true;
+        $("#addNew").modal('show');
+    }else if($(this).hasClass('btn-delete')){
+        let id = $(this).attr('data-info');
+        Parent.deleteStudent(id);
+    }
+})
+
+
 
 },
         watch:{

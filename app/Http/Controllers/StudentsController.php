@@ -258,10 +258,11 @@ class StudentsController extends Controller
     {
         // $this->authorize('isAdmin');
 
-        $deleted_record = $student->find($id)->delete();
+        $stud = $student->find($id);
+        $stud->delete();
         return response()->json([
             'message'=>'Student deleted successfully.',
-            'deleted_record'=>$deleted_record
+            'deleted_record'=>$stud
         ]);
     }
 }
