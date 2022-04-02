@@ -44,9 +44,8 @@ class ClassesController extends Controller
             'capacity'=>'required|min:1|max:3'
         ]);
 
-        if($request->class_teacher && $request->class_teacher != ''){
-            $class_teacher_id = Teachers::where('name', '=', $request->class_teacher)->first()->id;
-            $request->merge(['class_teacher_id'=>$class_teacher_id]);
+        if($request->class_teacher_id && $request->class_teacher_id != ''){
+            $request->merge(['class_teacher_id'=>$request->class_teacher_id]);
         }else{
             $request->merge(['class_teacher_id'=>null]);
         }
@@ -99,9 +98,9 @@ class ClassesController extends Controller
             'capacity'=>'required|min:1|max:3'
         ]);
 
-        if($request->class_teacher && $request->class_teacher != ''){
-            $class_teacher_id = Teachers::where('name', '=', $request->class_teacher)->first()->id;
-            $request->merge(['class_teacher_id'=>$class_teacher_id]);
+        if($request->class_teacher_id && $request->class_teacher_id != ''){
+            
+            $request->merge(['class_teacher_id'=>$request->class_teacher_id]);
         }else{
             $request->merge(['class_teacher_id'=>null]);
         }

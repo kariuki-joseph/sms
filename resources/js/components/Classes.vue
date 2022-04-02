@@ -9,6 +9,9 @@
                             :icon="`fas fa-school fa-fw`" 
                             :icon_text="'Add New'"
                             @openModal="addNew()"
+                            @pdfGen="generatePdf"
+                            @excelGen="generateExcel"
+                            @csvGen="generateCsv"
                         />
                     </div>
                     <!-- /.card-header -->
@@ -118,7 +121,7 @@
                                     >Select Class Teacher</label
                                 >
                                 <select
-                                    v-model="form.class_teacher"
+                                    v-model="form.class_teacher_id"
                                     name="class_teacher"
                                     class="form-control"
                                     :class="{
@@ -133,6 +136,7 @@
                                     <option
                                         v-for="teacher in teachers"
                                         :key="teacher.id"
+                                        :value="teacher.id"
                                     >
                                         {{ teacher.name }}
                                     </option>
@@ -172,23 +176,12 @@
                 </div>
             </div>
         </div>
-
-        <!--export options modal-->
-        <export-options-modal
-            @pdfGen="generatePdf"
-            @excelGen="generateExcel"
-            @csvGen="generateCsv"
-        />
-        <!--/ export options modal-->
     </div>
 </template>
 
 <script>
-import ExportOptionsModal from "./ExportOptionsModal.vue";
+
 export default {
-    components: {
-        ExportOptionsModal
-    },
     data() {
         return {
             editMode: false,
@@ -199,7 +192,8 @@ export default {
                 id: "",
                 name: "",
                 capacity: "",
-                class_teacher: ""
+                class_teacher: "",
+                class_teacher_id:""
             }),
             search: "",
             active_record_count: 10,
@@ -301,20 +295,23 @@ export default {
         },
         loadClasses() {
             if (this.$gate.isAdmin()) {
-                return (
-                    axios
-                        .get("classes?rec_count=" + this.active_record_count)
-                        .then(resp => {
-                            this.classes = resp.data;
-                            this.count = resp.data.total;
+                 
+                // axios
+                //     .get("classes?rec_count=" + this.active_record_count)
+                //     .then(resp => {
+                //         this.classes = resp.data;
+                //         this.count = resp.data.total;
 
-                            return new Promise((resolve, reject) =>
-                                resolve(resp)
-                            );
-                        }),
-                    // this.getRecordsCount();
-                    this.getAvailableTeachers()
-                );
+                //         return new Promise((resolve, reject) =>
+                //             resolve(resp)
+                //         );
+                //     }),
+                // this.getRecordsCount();
+        
+                //load class info using datatables ajax instead
+                this.dataTable? this.dataTable.ajax.reload():''
+                this.getAvailableTeachers()
+                
             }
         },
         createClass() {
@@ -405,6 +402,7 @@ export default {
         });
     },
     mounted(){
+        const Parent = this;
         this.dataTable = $("#table_classes").DataTable({
             processing:true,
             retrieve:true,
@@ -423,11 +421,11 @@ export default {
                             name:_class.name,
                             capacity:_class.capacity,
                             classTeacher:(_class.class_teacher != null)? _class.class_teacher.name:'Not yet assigned',
-                            modify:`<a href="#" onClick="editModal(${_class})">
+                            modify:`<a class="btn-edit" data-info='${JSON.stringify(_class)}'>
                                         <i class="fa fa-edit blue"></i>
                                     </a>
                                          /
-                                    <a href="#" onClick="deleteClass(${_class.id})">
+                                    <a class ="btn-delete" data-info=${_class.id} >
                                         <i class="fa fa-trash red"></i>
                                     </a>`
                         })
@@ -443,6 +441,35 @@ export default {
                 {data:'modify'}
             ]
         })
+
+    //edit and delete
+    $("#table_classes tbody").on('click', 'tr td a', function(){
+        if($(this).hasClass('btn-edit')){
+            //handle edit 
+            let data = JSON.parse($(this).attr('data-info'));
+            Parent.form.fill(data);
+            Parent.editMode=true;
+             $("#addNew").modal("show");
+
+        }else if($(this).hasClass('btn-delete')){
+            //handle delete
+            let id = $(this).attr('data-info');
+            Parent.deleteClass(id)
+        }
+
+        // let sel_staff = staffs_datatable.row(".selected").data();
+        // if(sel_staff){
+        //     Parent.form.clear();
+        //     Parent.form.user_type = 'staffs';
+        //     Parent.form.user_id= sel_staff.id;
+        //     Parent.form.user_name = sel_staff.name;
+        // }else{
+        //     Parent.form.clear();
+        //     Parent.form.user_id= '';
+        //     Parent.form.user_name = '';
+        // }
+
+    })
     }
 };
 </script>
