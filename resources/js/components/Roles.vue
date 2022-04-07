@@ -4,35 +4,15 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                  <div class="row">
-                    <div class="container">
-                        <h3 class="card-title">{{ count }} roles records</h3>
-                    </div>
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                <button class="btn btn-success" @click="addNew()"><i class="fas fa-chalkboard-teacher fa-fw"></i> Add New </button>
-                        </div>
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p class="tec font-weight-bold">Show:
-                                    <select name="records" @change="updateRecordsToShow">
-                                            <option v-for="record in records" :key="record">{{ record }}</option>
-                                    </select>
-                                </p>
-                        </div>
-
-                        <div class="col-sm-4 col-md-4 col-lg-4">
-
-                        </div>
-
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                            <div class="input-group input-group-sm my-2">
-                                <input class="form-control" @keyup="searchRoles" type="search" placeholder="Search" aria-label="Search" v-model="search">
-                            </div>
-                        </div>
-
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                            <button class="btn btn-secondary" data-toggle="modal" data-target="#modalExportOptions"><i class="fas fa-file-export fa-fw"></i> Export As </button>
-                        </div>
-                </div>
+                  <table-header 
+                        :title="`${count} roles records`" 
+                        :icon="`fas fa-chalkboard-teacher fa-fw`" 
+                        :icon_text="'Add New'"
+                        @openModal="addNew()"
+                        @pdfGen="generatePdf" 
+                        @excelGen="generateExcel"  
+                        @csvGen="generateCsv"
+                    />
               </div>
               <!-- /.card-header -->
               <div class="card-body table-responsive p-0">
@@ -55,11 +35,11 @@
                     <td>{{role.name}}</td>
                     <td>{{role.role}}</td>
                      <td>
-                        <a href="#" @click="editModal(role)">
+                        <a @click="editModal(role)">
                             <i class="fa fa-edit blue"></i>
                         </a>
                         /
-                        <a href="#" @click="deleteRole(role.id)">
+                        <a @click="deleteRole(role.id)">
                             <i class="fa fa-trash red"></i>
                         </a>
 
@@ -78,65 +58,59 @@
           </div>
         </div>
         <div v-if="!$gate.isAdmin()">
-               <not-found></not-found>
+            <not-found></not-found>
         </div>
 
     <!-- Modal -->
-            <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="addNewLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered" role="document">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" v-show="!editMode" id="addNewLabel"><i class="fas fa-plus fa-fw"></i> Add New</h5>
-                    <h5 class="modal-title" v-show="editMode" id="addNewLabel"><i class="fa fa-edit"></i> Update <b>{{ form.name }}</b>'s Role</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <form @submit.prevent="editMode ? updateRole(): createRole()">
-                <div class="modal-body">
-                     <div class="form-group">
-                        <input v-model="form.name" type="text" name="name"
-                            placeholder="Name"
-                            class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
-                        <has-error :form="form" field="name"></has-error>
-                    </div>
-
-                     <div class="form-group">
-                        <input v-model="form.role" type="text" name="role"
-                            placeholder="Role"
-                            class="form-control" :class="{ 'is-invalid': form.errors.has('role')}">
-                        <has-error :form="form" field="role"></has-error>
-                    </div>
-                </div>
-                <div class="d-flex justify-content-between">
-                        <button type="button" class="btn btn-danger ml-3 mb-3" data-dismiss="modal"><i class="fa fa-window-close"></i> Close</button>
-                        <div>
-                            <button type="submit" v-show="editMode" class="btn btn-success mr-3 mb-3"><i class="fa fa-edit"></i> Update</button>
-                            <button  type="submit" v-show="!editMode" class="btn btn-primary mr-3 mb-3"><i class="fa fa-plus"></i> Create</button>
-                        </div>
+        <div class="modal fade" id="addNew" tabindex="-1" role="dialog" aria-labelledby="addNewLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" v-show="!editMode" id="addNewLabel"><i class="fas fa-plus fa-fw"></i> Add New</h5>
+                <h5 class="modal-title" v-show="editMode" id="addNewLabel"><i class="fa fa-edit"></i> Update <b>{{ form.name }}</b>'s Role</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form @submit.prevent="editMode ? updateRole(): createRole()">
+            <div class="modal-body">
+                    <div class="form-group">
+                    <input v-model="form.name" type="text" name="name"
+                        placeholder="Name"
+                        class="form-control" :class="{ 'is-invalid': form.errors.has('name') }">
+                    <has-error :form="form" field="name"></has-error>
                 </div>
 
-                </form>
-
+                    <div class="form-group">
+                    <input v-model="form.role" type="text" name="role"
+                        placeholder="Role"
+                        class="form-control" :class="{ 'is-invalid': form.errors.has('role')}">
+                    <has-error :form="form" field="role"></has-error>
                 </div>
             </div>
+            <div class="d-flex justify-content-between">
+                    <button type="button" class="btn btn-danger ml-3 mb-3" data-dismiss="modal"><i class="fa fa-window-close"></i> Close</button>
+                    <div>
+                        <button type="submit" v-show="editMode" class="btn btn-success mr-3 mb-3"><i class="fa fa-edit"></i> Update</button>
+                        <button  type="submit" v-show="!editMode" class="btn btn-primary mr-3 mb-3"><i class="fa fa-plus"></i> Create</button>
+                    </div>
             </div>
 
-            <!--export options modal-->
-            <export-options-modal @pdfGen="generatePdf" @excelGen="generateExcel"  @csvGen="generateCsv"></export-options-modal>
-            <!--/ export options modal-->
+            </form>
+
+            </div>
+        </div>
+        </div>
+
     </div>
-
-
 
 </template>
 
 <script>
-import ExportOptionsModal from './ExportOptionsModal.vue';
 
     export default {
         components:{
-            ExportOptionsModal
+            
         },
         data() {
             return {

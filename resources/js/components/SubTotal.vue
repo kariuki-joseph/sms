@@ -1,4 +1,5 @@
 <template>
+<!-- used to get subtotals for a certain payment -->
    <td>{{ sum }}</td>
 </template>
 <script>

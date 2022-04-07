@@ -17,7 +17,7 @@ class CreateTeachersTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->string('email')->nullable();
-            $table->bigInteger('phone');
+            $table->string('phone',20);
             $table->timestamps();
         });
     }

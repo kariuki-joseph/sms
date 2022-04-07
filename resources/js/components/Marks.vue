@@ -4,36 +4,15 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
-                <div class="row">
-                    <div class="container">
-                        <h3 class="card-title">{{ count }} marks records</h3>
-                    </div>
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                <button class="btn btn-success" @click="addNew()"><i class="fas fa-book fa-fw"></i> Add New </button>
-                        </div>
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p class="tec font-weight-bold">Show:
-                                    <select name="records" @change="updateRecordsToShow">
-                                            <option v-for="record in records" :key="record">{{ record }}</option>
-                                    </select>
-                                </p>
-                        </div>
-
-                        <div class="col-sm-4 col-md-4 col-lg-4">
-
-                        </div>
-
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                            <div class="input-group input-group-sm my-2">
-                                <input class="form-control" @keyup="searchMarks" type="search" placeholder="Search" aria-label="Search" v-model="search">
-                            </div>
-                        </div>
-
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                            <button class="btn btn-secondary" data-toggle="modal" data-target="#modalExportOptions"><i class="fas fa-file-export fa-fw"></i> Export As </button>
-                        </div>
-
-                </div>
+                  <table-header 
+                    :title="`${ count } marks records`" 
+                    :icon="`fas fa-book fa-fw`" 
+                    :icon_text="'Add New'"
+                    @openModal="addNew()"
+                    @pdfGen="generatePdf" 
+                    @excelGen="generateExcel"  
+                    @csvGen="generateCsv"
+                />
               </div>
               <!-- /.card-header -->
               <div class="card-body table-responsive p-0">
@@ -52,11 +31,11 @@
                         <td>{{mark.grade}}</td>
                         <td>{{mark.remark | upText}}</td>
                         <td>
-                            <a href="#" @click="editModal(mark)">
+                            <a @click="editModal(mark)">
                                 <i class="fa fa-edit blue"></i>
                             </a>
                             /
-                            <a href="#" @click="deleteMark(mark.id)">
+                            <a @click="deleteMark(mark.id)">
                                 <i class="fa fa-trash red"></i>
                             </a>
 
@@ -129,19 +108,11 @@
             </div>
         </div>
     </div>
-
-            <!--export options modal-->
-            <export-options-modal @pdfGen="generatePdf" @excelGen="generateExcel"  @csvGen="generateCsv"></export-options-modal>
-            <!--/ export options modal-->
     </div>
 </template>
 
 <script>
-import ExportOptionsModal from './ExportOptionsModal.vue';
   export default {
-    components: {
-            ExportOptionsModal
-            },
         data() {
             return {
                 editMode:false,
@@ -170,14 +141,14 @@ import ExportOptionsModal from './ExportOptionsModal.vue';
             },
             generateExcel(){
                 Fire.$emit('generateExcel',{
-                    table: '#table_marks',
+                    data: new TableData("#table_marks"),
                     filename: 'marks.xlsx'
                 });
 
             },
             generateCsv(){
                 Fire.$emit('generateCsv', {
-                    table: '#table_marks',
+                    data: new TableData("#table_marks"),
                     filename: 'marks.csv'
                 })
             },

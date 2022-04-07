@@ -8,6 +8,9 @@
                     :icon="`fas fa-chalkboard-teacher fa-fw`" 
                     :icon_text="'Add New'"
                     @openModal="addNew()"
+                    @pdfGen="generatePdf" 
+                    @excelGen="generateExcel"  
+                    @csvGen="generateCsv"
                 />
               <!-- /.card-header -->
               <div class="card-body table-responsive p-0">
@@ -81,10 +84,6 @@
                 </div>
             </div>
             </div>
-
-            <!--export options modal-->
-           <export-options-modal @pdfGen="generatePdf" @excelGen="generateExcel"  @csvGen="generateCsv"/>
-            <!--/ export options modal-->
     </div>
 
 
@@ -92,12 +91,11 @@
 </template>
 
 <script>
-import ExportOptionsModal from './ExportOptionsModal.vue';
 import TableHeader from './TableHeader.vue';
 
     export default {
         components:{
-            ExportOptionsModal
+            
         },
         
         data() {
@@ -126,14 +124,14 @@ import TableHeader from './TableHeader.vue';
             },
             generateExcel(){
                 Fire.$emit('generateExcel',{
-                    table: '#table_teachers',
+                    data: new TableData("#table_teachers"),
                     filename: 'teachers.xlsx'
                 });
 
             },
             generateCsv(){
                 Fire.$emit('generateCsv', {
-                    table: '#table_teachers',
+                    data: new TableData("#table_teachers"),
                     filename: 'teachers.csv'
                 })
             },
@@ -191,12 +189,15 @@ import TableHeader from './TableHeader.vue';
             },
             loadTeachers(){
                 if (this.$gate.isAdmin()) {
-                    return axios.get('teachers?rec_count='+this.active_record_count).then((resp)=>{
-                        this.teachers = resp.data;
-                        this.count = resp.data.total;
-                        return new Promise((resolve, reject)=>resolve(resp));
-                    });
-                    // this.getRecordsCount();
+                    // return axios.get('teachers?rec_count='+this.active_record_count).then((resp)=>{
+                    //     this.teachers = resp.data;
+                    //     this.count = resp.data.total;
+                    //     return new Promise((resolve, reject)=>resolve(resp));
+                    // });
+
+                // datatable ajax refresh
+                this.dataTable.ajax? this.dataTable.ajax.reload():'';
+
                 }
             },
             createTeacher(){
@@ -285,11 +286,11 @@ import TableHeader from './TableHeader.vue';
                                 email: teacher.email,
                                 phone: teacher.phone,
                                 modify:`
-                                    <a href="#" @click="editModal(${teacher})">
+                                    <a @click="editModal(${teacher})">
                                         <i class="fa fa-edit blue"></i>
                                     </a>
                                     /
-                                    <a href="#" @click="deleteTeacher(${teacher.id})">
+                                    <a @click="deleteTeacher(${teacher.id})">
                                         <i class="fa fa-trash red"></i>
                                     </a>
                                 `

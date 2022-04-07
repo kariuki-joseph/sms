@@ -4,9 +4,18 @@
           <div class="col-md-12">
             <div class="card">
               <div class="card-header">
+                  <table-header 
+                    :title="`${ count } user types records`" 
+                    :icon="`fas fa-user fa-fw`" 
+                    :icon_text="'Add New'"
+                    @openModal="addNew()"
+                    @pdfGen="generatePdf" 
+                    @excelGen="generateExcel"  
+                    @csvGen="generateCsv"
+                />
                   <div class="row">
                     <div class="container">
-                        <h3 class="card-title">{{ count }} user types records</h3>
+                        <h3 class="card-title"></h3>
                     </div>
                         <div class="col-sm-2 col-md-2 col-lg-2">
                                 <button class="btn btn-success" @click="addNew()"><i class="fas fa-chalkboard-teacher fa-fw"></i> Add New </button>
@@ -53,11 +62,11 @@
                     <td>{{ user_type.id}}</td>
                     <td>{{user_type.name}}</td>
                      <td>
-                        <a href="#" @click="editModal(user_type)">
+                        <a @click="editModal(user_type)">
                             <i class="fa fa-edit blue"></i>
                         </a>
                         /
-                        <a href="#" @click="deleteUserType(user_type.id)">
+                        <a @click="deleteUserType(user_type.id)">
                             <i class="fa fa-trash red"></i>
                         </a>
 
@@ -112,10 +121,6 @@
                 </div>
             </div>
             </div>
-
-            <!--export options modal-->
-            <export-options-modal @pdfGen="generatePdf" @excelGen="generateExcel"  @csvGen="generateCsv"></export-options-modal>
-            <!--/ export options modal-->
     </div>
 
 
@@ -123,11 +128,10 @@
 </template>
 
 <script>
-import ExportOptionsModal from './ExportOptionsModal.vue';
 
     export default {
         components:{
-            ExportOptionsModal
+            
         },
         data() {
             return {
@@ -152,14 +156,14 @@ import ExportOptionsModal from './ExportOptionsModal.vue';
             },
             generateExcel(){
                 Fire.$emit('generateExcel',{
-                    table: '#table_user_types',
+                    data: new TableData("#table_user_types"),
                     filename: 'user_types.xlsx'
                 });
 
             },
             generateCsv(){
                 Fire.$emit('generateCsv', {
-                    table: '#table_user_types',
+                   data: new TableData("#table_user_types"),
                     filename: 'user_types.csv'
                 })
             },

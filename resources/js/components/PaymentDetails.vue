@@ -1,101 +1,119 @@
 <template>
-   <div>
-      <div class="row">
-         <div class="col-md-3 mb-2">
-            <select class="form-control" @change="onSelectPayable">
-               <option value="*">All</option>
-               <option v-for="payable in payables"
-                  :key="payable.id"
-                  :value="payable.id"
-                  >
-                  {{ payable.name }}
-               </option
-                  >
-            </select>
-         </div>
+  <div>
+    <div class="row mt-5" v-if="$gate.isAdmin()">
+      <div class="col-md-12">
+        <div class="card">
+          <div class="card-header">
+            <table-header
+              :title="'Fees Payment Information'"
+              :hidden="true"
+              @pdfGen="generatePdf"
+              @excelGen="generateExcel"
+              @csvGen="generateCsv"
+            />
+          </div>
+          <!-- /.card-header -->
+          <div class="card-body table-responsive p-0">
+            <table
+              class="table table-head-fixed table-hover"
+              id="table_payment_details"
+            >
+              <thead>
+                <tr>
+                  <th>Payment Type</th>
+                  <th>Student Name</th>
+                  <th>Adm. No.</th>
+                  <th>Class</th>
+                  <th>Serial No.</th>
+                  <th>Date Received</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+          <!-- /.card-body -->
+          <div class="card-footer"></div>
+        </div>
+        <!-- /.card -->
       </div>
-      <table
-         class="table table-head-fixed text-nowrap"
-         id="table_payment_details"
-         >
-         <thead>
-            <tr>
-               <th>Payment Type</th>
-               <th>Student Name</th>
-               <th>Adm. No.</th>
-               <th> Class</th>
-               <th> Serial No.</th>
-               <th>Date Received</th>
-               <th>Subtotal</th>
-            </tr>
-         </thead>
-         <tbody>
-            <tr v-for="payment in filteredFees" :key="payment.id">
-               <td v-show="payment.payable">{{ payment.payable.name }}</td>
-               <td v-if="payment.student">{{ payment.student.name }}</td>
-               <td v-if="payment.student">{{ payment.student.adm_number }}</td>
-               <td v-if="payment.student.class">{{ payment.student.class.name || 'and' }}</td>
-               <td>{{ payment.id }}</td>
-               <td>{{ payment.created_at }}</td>
-               <td>{{ payment.amount }}</td>
-            </tr>
-         </tbody>
-      </table>
-   </div>
+    </div>
+    <div v-if="!$gate.isAdmin()">
+      <not-found></not-found>
+    </div>
+  </div>
 </template>
 
 <script>
 export default {
-      props:{
-         feesInfo:{
-
-         },
-         payables:{
-
-         }
-      },
-    data(){
-        return{
-          fees:'',
-          filteredFees:''
-        }
+  data() {
+    return {
+      dataTable: "",
+    };
+  },
+  methods: {
+    generatePdf() {
+      Fire.$emit("generatePdf", {
+        data: new TableData("#table_payment_details"),
+        filename: "payment_details.pdf",
+      });
     },
-    methods:{
-    onSelectPayable(e){
-    let payableId = e.target.value;
-    let filtered = (payableId == '*') ? this.fees : this.fees.filter(fee=>fee.payable.id == payableId);
-
-    this.filteredFees = filtered;
+    generateExcel() {
+      Fire.$emit("generateExcel", {
+        data: new TableData("#table_payment_details"),
+        filename: "payment_details.xlsx",
+      });
     },
-       generatePdf(){
-            Fire.$emit('generatePdf', {
-                data: new TableData("#table_payment_details"),
-                filename:'payment_details.pdf',
+    generateCsv() {
+      Fire.$emit("generateCsv", {
+        data: new TableData("#table_payment_details"),
+        filename: "payment_details.csv",
+      });
+    },
+  },
+  created() {},
+  mounted() {
+    this.dataTable = $("#table_payment_details").DataTable({
+      processing: true,
+      retrieve: true,
+      pageLength: 25,
+      select: true,
+      scrollY: "500px",
+      ajax: {
+        type: "GET",
+        url: "fees",
+        dataSrc: function ({ data }) {
+          let i,
+            fees,
+            resp = [];
+          for (i = 0; i < data.length; i++) {
+            fees = data[i];
+            resp.push({
+              paymentType: fees.payable.name,
+              studentName: `<a href="#/students/${
+                fees.student.adm_number ?? "0"
+              }/profile">${fees.student.name ?? "Unable to get student"}</a>`,
+              admNo: fees.student.adm_number,
+              className: fees.student.class.name,
+              serialNo: fees.id,
+              dateReceived: fees.created_at,
+              amount: fees.amount,
             });
-            },
-            generateExcel(){
-                Fire.$emit('generateExcel',{
-                    table: '#table_payment_details',
-                    filename: 'payment_details.xlsx'
-                });
-
-            },
-            generateCsv(){
-                Fire.$emit('generateCsv', {
-                    table: '#table_payment_details',
-                    filename: 'payment_details.csv'
-                })
-            },
-    },
-    created(){
-      Fire.$on('loadComplete:feesInfo', fees=>{
-        this.fees=this.filteredFees = fees;
-      })
-    },
-    mounted(){
-         
-    },
-    computed:{
-    }
-}
+          }
+          return resp;
+        },
+      },
+      columns: [
+        { data: "paymentType" },
+        { data: "studentName" },
+        { data: "admNo" },
+        { data: "className" },
+        { data: "serialNo" },
+        { data: "dateReceived" },
+        { data: "amount" },
+      ],
+    });
+  },
+  computed: {},
+};
 </script>

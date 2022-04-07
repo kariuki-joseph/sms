@@ -2,38 +2,17 @@
    <div class="container">
       <div class="row mt-5" v-if="$gate.isAdmin()">
          <div class="col-md-12">
-            <div class="card">
+        <div class="card">
                <div class="card-header">
-                  <div class="row">
-                     <div class="container">
-                        <h3 class="card-title">
-                           {{ count }} payable(s) records
-                        </h3>
-                     </div>
-                     <div class="col-sm-2 col-md-2 col-lg-2">
-                        <button
-                           class="btn btn-success"
-                           @click="addNew()"
-                           >
-                        <i class="fas fa-school fa-fw"></i> Add New
-                        </button>
-                     </div>
-                     <div class="col-sm-2 col-md-2 col-lg-2">
-                     </div>
-                     <div class="col-sm-4 col-md-4 col-lg-4"></div>
-                     <div class="col-sm-2 col-md-2 col-lg-2">
-                     </div>
-                     <div class="col-sm-2 col-md-2 col-lg-2">
-                        <button
-                           class="btn btn-secondary"
-                           data-toggle="modal"
-                           data-target="#modalExportOptions"
-                           >
-                        <i class="fas fa-file-export fa-fw"></i>
-                        Export As
-                        </button>
-                     </div>
-                  </div>
+                  <table-header 
+                     :title="`${ count } payable(s) records}`" 
+                     :icon="`fas fa-school fa-fw`" 
+                     :icon_text="'Add New'"
+                     @openModal="addNew()"
+                     @pdfGen="generatePdf"
+                     @excelGen="generateExcel"
+                     @csvGen="generateCsv"
+               />
                </div>
                <!-- /.card-header -->
                <div class="card-body table-responsive p-0">
@@ -57,12 +36,12 @@
                            <td>{{ payable.amount }}</td>
                            <td>{{ payable.upcoming | formatUpcoming }}</td>
                            <td>
-                              <a href="#" @click="editModal(payable)">
+                              <a @click="editModal(payable)">
                               <i class="fa fa-edit blue"></i>
                               </a>
                               /
                               <a
-                                 href="#"
+                                
                                  @click="deletePayable(payable.id)"
                                  >
                               <i class="fa fa-trash red"></i>
@@ -206,23 +185,31 @@
                </form>
             </div>
          </div>
+         <!-- Export Options modal -->
+            <div class="modal fade" id="modalExportOptions" role="dialog">
+                <div class="modal-dialog modal-dialog-centered modal-sm" role="document">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <div class="modal-title">Choose One</div>
+                            <ul class="list-unstyled">
+                                <a  @click="$emit('pdfGen')" class="text-decoration-none"><li class="w-100 text-center py-1 my-1 btn btn-success"><i class="fa fa-file-pdf fa-lg"></i> PDF</li></a>
+                                <a @click="$emit('excelGen')" class="text-decoration-none"><li class="w-100 text-center py-1 my-1 btn btn-secondary"><i class="fa fa-file-excel fa-lg"></i> EXCEL</li></a>
+                                <a  @click="$emit('csvGen')" class="text-decoration-none"><li class="w-100 text-center py-1 my-1 btn btn-danger"><i class="fa fa-file-csv fa-lg"></i> CSV</li></a>
+                            </ul>
+                        </div>
+                        <div class="modal-footer">
+                            <button class="btn btn-danger text-white" data-toggle="close" data-dismiss="modal"><i class="fa fa-window-close"></i> Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /Export options modal -->
       </div>
-      <!--export options modal-->
-      <export-options-modal
-      @pdfGen="generatePdf"
-      @excelGen="generateExcel"
-      @csvGen="generateCsv"
-      ></export-options-modal>
-      <!--/ export options modal-->
    </div>
 </template>
 
 <script>
-import ExportOptionsModal from "./ExportOptionsModal.vue";
 export default {
-    components: {
-        ExportOptionsModal
-    },
     data() {
         return {
             editMode: false,
@@ -247,13 +234,13 @@ export default {
         },
         generateExcel() {
             Fire.$emit("generateExcel", {
-                table: "#table_payables",
+                data: new TableData("#table_payables"),
                 filename: "payables.xlsx"
             });
         },
         generateCsv() {
             Fire.$emit("generateCsv", {
-                table: "#table_payables",
+                data: new TableData("#table_payables"),
                 filename: "payables.csv"
             });
         },

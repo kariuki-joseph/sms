@@ -13,7 +13,7 @@ export default class TableData{
 
        for(let i=0; i<rows.length; i += columns.length){
             let td = {};
-          for(let j=0; j<columns.length; j++){
+          for(let j=0; j<columns.length-1; j++){
                 td[columns[j]] = rows[i+j]
           }
           data.push(td)

@@ -9,6 +9,9 @@
                         :icon="`fas fa-users fa-fw`" 
                         :icon_text="'Add New'"
                         @openModal="addNew()"
+                        @pdfGen="generatePdf" 
+                        @excelGen="generateExcel"  
+                        @csvGen="generateCsv"
                     />
               </div>
               <!-- /.card-header -->
@@ -34,11 +37,11 @@
                         <td>{{user.created_at|myDate }}</td>
 
                         <td>
-                            <a href="#" @click="editModal(user)">
+                            <a @click="editModal(user)">
                                 <i class="fa fa-edit blue"></i>
                             </a>
                             /
-                            <a href="#" @click="deleteUser(user.id)">
+                            <a @click="deleteUser(user.id)">
                                 <i class="fa fa-trash red"></i>
                             </a>
 
@@ -111,22 +114,13 @@
             </div>
         </div>
     </div>
-
-            <!--export options modal-->
-            <export-options-modal
-                @pdfGen="generatePdf" 
-                @excelGen="generateExcel"  
-                @csvGen="generateCsv"
-            />
-            <!--/ export options modal-->
     </div>
 </template>
 
 <script>
-import ExportOptionsModal from './ExportOptionsModal.vue';
   export default {
     components: {
-            ExportOptionsModal
+            
             },
         data() {
             return {
@@ -156,14 +150,14 @@ import ExportOptionsModal from './ExportOptionsModal.vue';
             },
             generateExcel(){
                 Fire.$emit('generateExcel',{
-                    table: '#table_users',
+                    data: new TableData("#table_users"),
                     filename: 'users.xlsx'
                 });
 
             },
             generateCsv(){
                 Fire.$emit('generateCsv', {
-                    table: '#table_users',
+                    data: new TableData("#table_users"),
                     filename: 'users.csv'
                 })
             },

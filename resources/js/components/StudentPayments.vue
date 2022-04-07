@@ -1,4 +1,5 @@
 <template>
+<!-- This file is used in students profile to check on payments -->
      <table class="table table-head-fixed text-nowrap">
         <thead>
             <tr>

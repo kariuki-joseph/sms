@@ -4,6 +4,15 @@
           <div class="col-md-12">
             <div class="card">
               <!-- /.card-header -->
+              <table-header 
+                :title="'Exams Records'" 
+                :icon="`fas fa-book fa-fw`" 
+                :icon_text="'Add New'"
+                @openModal="addNew()"
+                @pdfGen="generatePdf"
+                @excelGen="generateExcel"
+                @csvGen="generateCsv"
+            />
               <div class="card-body table-responsive p-0">
                 <table class="table table-hover" id="table_exams">
                 <thead>
@@ -21,11 +30,11 @@
                     <td>{{exam.name}}</td>
                     <td>{{exam.exam_id}}</td>
                      <td>
-                        <a href="#" @click="editModal(exam)">
+                        <a @click="editModal(exam)">
                             <i class="fa fa-edit blue"></i>
                         </a>
                         /
-                        <a href="#" @click="deleteExam(exam.id)">
+                        <a @click="deleteExam(exam.id)">
                             <i class="fa fa-trash red"></i>
                         </a>
 
@@ -87,11 +96,6 @@
                 </div>
             </div>
         </div>
-
-
-            <!--export options modal-->
-            <export-options-modal @pdfGen="generatePdf" @excelGen="generateExcel"  @csvGen="generateCsv"></export-options-modal>
-            <!--/ export options modal-->
     </div>
 
 
@@ -99,11 +103,9 @@
 </template>
 
 <script>
-import ExportOptionsModal from './ExportOptionsModal.vue';
+import TableHeader from './TableHeader.vue'
     export default {
-        components:{
-            ExportOptionsModal
-        },
+        components:{TableHeader},
         data() {
             return {
                 editMode:false,

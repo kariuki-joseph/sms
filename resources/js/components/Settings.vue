@@ -22,6 +22,9 @@
                                                     :icon="`fas fa-cog fa-fw`" 
                                                     :icon_text="'New Settings'"
                                                     @openModal="addNew()"
+                                                    @pdfGen="generatePdf" 
+                                                    @excelGen="generateExcel"  
+                                                    @csvGen="generateCsv"
                                                 />
                                             </div>
                                         <!-- /.card-header -->
@@ -53,11 +56,11 @@
                                                         <td>{{ record.phone}}</td>
 
                                                         <td>
-                                                            <a href="#" @click="editModal(record)">
+                                                            <a @click="editModal(record)">
                                                                 <i class="fa fa-edit blue"></i>
                                                             </a>
                                                             /
-                                                            <a href="#" @click="deleteSettings(record.id)">
+                                                            <a @click="deleteSettings(record.id)">
                                                                 <i class="fa fa-trash red"></i>
                                                             </a>
 
@@ -177,13 +180,6 @@
             </div>
         </div>
     </div>
-
-            <!--export options modal-->
-            <export-options-modal 
-            @pdfGen="generatePdf" 
-            @excelGen="generateExcel"  
-            @csvGen="generateCsv"/>
-            <!--/ export options modal-->
     </div>
 
 
@@ -191,11 +187,10 @@
 </template>
 
 <script>
-import ExportOptionsModal from './ExportOptionsModal.vue';
 import TableHeader  from "./TableHeader";
     export default {
         components:{
-            ExportOptionsModal
+            
         },
         data() {
             return {
@@ -231,14 +226,14 @@ import TableHeader  from "./TableHeader";
             },
             generateExcel(){
                 Fire.$emit('generateExcel',{
-                    table: '#table_settings',
+                    data: new TableData("#table_settings"),
                     filename: 'settings.xlsx'
                 });
 
             },
             generateCsv(){
                 Fire.$emit('generateCsv', {
-                    table: '#table_settings',
+                    data: new TableData("#table_settings"),
                     filename: 'settings.csv'
                 })
             },
