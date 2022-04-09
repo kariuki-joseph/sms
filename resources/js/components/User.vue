@@ -28,7 +28,7 @@
                          </tr>
                     </thead>
                   <tbody>
-                  <tr v-for="user in users.data" :key="user.id">
+                  <tr v-for="user in users" :key="user.id">
 
                         <td>{{ user.id}}</td>
                         <td>{{user.name}}</td>
@@ -88,9 +88,7 @@
                      <div class="form-group">
                         <select v-model="form.user_type" name="user_type" id="user_type" class="form-control" :class="{'is-invalid': form.errors.has('user_type')}">
                             <option value="">Select User Role</option>
-                            <option value="admin">Admin</option>
-                            <option value="user">Standard User</option>
-                            <option value="author">Author</option>
+                            <option  v-for="uType in user_types" :key="uType.id">{{ uType.name }}</option>
                         </select>
                         <has-error :form="form" field="user_type"></has-error>
                     </div>
@@ -119,13 +117,12 @@
 
 <script>
   export default {
-    components: {
-            
-            },
+    components: {},
         data() {
             return {
                 editMode:false,
                 users:{},
+                user_types:'',
                 count: 0,
                 form: new Form({
                     id:'',
@@ -161,6 +158,11 @@
                     filename: 'users.csv'
                 })
             },
+            getUserTypes(){
+                axios.get('users/types').then(({data})=>{
+                    this.user_types = data
+                })
+            },
             getRecordsCount(){
                 axios.get('api/count').then(data=>this.count = data.data);
             },
@@ -193,7 +195,7 @@
             },
             updateUser(id){
                 this.$Progress.start();
-                this.form.put('api/user/'+this.form.id)
+                this.form.put('api/users/'+this.form.id)
                 .then((response)=>{
                     //create a log
                     this.$parent.createLog("Updated a record :"+response.data.original_record+":"+response.data.updated_record);
@@ -214,17 +216,16 @@
             },
             loadUsers(){
                 if (this.$gate.isAdmin()) {
-                   return  axios.get('api/user?rec_count='+this.active_record_count).then((resp)=>{
-                        this.users = resp.data;
-                        this.count = resp.data.total;
-                        console.log("Total Records: "+JSON.stringify(resp.data.total))
-                        return new Promise((resolve, reject)=>resolve(resp));
+                   return  axios.get('api/users').then(({data})=>{
+                        this.users = data;
+                        this.count = data.length
+                        return new Promise((resolve, reject)=>resolve(data));
                         });
                 }
             },
             createUser(){
                 this.$Progress.start();
-                this.form.post('api/user')
+                this.form.post('api/users')
                 .then((response)=>{
                     Fire.$emit('afterCreate');
                     //creaate a new log of this
@@ -274,6 +275,7 @@
         created() {
             console.log("User component has been created")
             this.loadUsers();
+            this.getUserTypes();
             Fire.$on('afterCreate',()=>{
                 this.loadUsers();
             });

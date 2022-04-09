@@ -17,8 +17,7 @@ class UserController extends Controller
      */
     public function index(Request $request){
         //$this->authorize('isAdmin');
-        $count =  $request->rec_count;
-        return User::latest()->paginate($count ? $count : 10);
+        return User::latest()->get();
     }
 
     public function search()
@@ -125,6 +124,7 @@ class UserController extends Controller
         // $this->authorize('isAdmin');
 
         $user = User::findOrFail($id);
+        
         $this->validate($request,[
             'name'=>'required|string|max:191',
             'email'=>'required|string|email|max:191|unique:users,email,'.$user->id,

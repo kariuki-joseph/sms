@@ -13,11 +13,11 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
+Route::middleware('auth:api')->get('/users', function (Request $request) {
     return $request->user();
 });
 
-Route::apiResources(['user'=>'API\UserController']);
+Route::apiResources(['users'=>'API\UserController']);
 
 Route::get('users/pdf', function(){
     $users = \App\User::all();

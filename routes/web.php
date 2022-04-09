@@ -136,20 +136,17 @@ Route::post('teachers/{id}/delete', 'TeachersController@destroy');
 
 
 
-Route::get('user_types', 'UserTypeController@index');
-Route::post('user_types', 'UserTypeController@store');
-Route::get('user_types/find', 'UserTypeController@find');
-Route::get('user_types/{id}', 'UserTypeController@show');
-Route::post('user_types/{id}/update', 'UserTypeController@update');
-Route::post('user_types/{id}/delete', 'UserTypeController@destroy');
-Route::get('user_types/download-pdf', 'UserTypeController@downloadPdf');
-Route::get('user_types/download-excel', 'UserTypeController@downloadExcel');
-Route::get('user_types/download-csv', 'UserTypeController@downloadCsv');
-Route::get('user_types/count', function(){ return \App\UserTypes::count();});
-Route::get('user_types/pdf', function(){
-    $user_types = \App\UserTypes::all();
-    return view('downloads.user_types', compact('user_types'));
-});
+Route::get('users/types', 'UserTypeController@index');
+Route::post('users/types', 'UserTypeController@store');
+Route::get('users/types/find', 'UserTypeController@find');
+Route::get('users/types/{id}', 'UserTypeController@show');
+Route::post('users/types/{id}/update', 'UserTypeController@update');
+Route::post('users/types/{id}/delete', 'UserTypeController@destroy');
+Route::get('users/types/download-pdf', 'UserTypeController@downloadPdf');
+Route::get('users/types/download-excel', 'UserTypeController@downloadExcel');
+Route::get('users/types/download-csv', 'UserTypeController@downloadCsv');
+Route::get('users/types/count', function(){ return \App\UserTypes::count();});
+
 
 Route::get('staffs', 'StaffsController@index');
 Route::post('staffs', 'StaffsController@store');

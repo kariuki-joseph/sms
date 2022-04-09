@@ -13,35 +13,6 @@
                     @excelGen="generateExcel"  
                     @csvGen="generateCsv"
                 />
-                  <div class="row">
-                    <div class="container">
-                        <h3 class="card-title"></h3>
-                    </div>
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                <button class="btn btn-success" @click="addNew()"><i class="fas fa-chalkboard-teacher fa-fw"></i> Add New </button>
-                        </div>
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                                <p class="tec font-weight-bold">Show:
-                                    <select name="records" @change="updateRecordsToShow">
-                                            <option v-for="record in records" :key="record">{{ record }}</option>
-                                    </select>
-                                </p>
-                        </div>
-
-                        <div class="col-sm-4 col-md-4 col-lg-4">
-
-                        </div>
-
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                            <div class="input-group input-group-sm my-2">
-                                <input class="form-control" @keyup="searchUserTypes" type="search" placeholder="Search" aria-label="Search" v-model="search">
-                            </div>
-                        </div>
-
-                        <div class="col-sm-2 col-md-2 col-lg-2">
-                            <button class="btn btn-secondary" data-toggle="modal" data-target="#modalExportOptions"><i class="fas fa-file-export fa-fw"></i> Export As </button>
-                        </div>
-                </div>
               </div>
               <!-- /.card-header -->
               <div class="card-body table-responsive p-0">
@@ -168,7 +139,7 @@
                 })
             },
             getRecordsCount(){
-                axios.get('user_types/count').then(data=>this.count = data.data);
+                axios.get('users/types/count').then(data=>this.count = data.data);
             },
             closeOptionsModal(){
                 $('#modalExportOptions').modal('hide');
@@ -178,11 +149,8 @@
                 this.active_record_count = newRecordCount;
                 Fire.$emit('recordCountChange:user_types');
             },
-            searchUserTypes:_.debounce(()=>{
-                Fire.$emit('searching:user_types');
-            }, 1000),
             getUserTypes(page=1){
-                axios.get('/user_types?page='+page+'&rec_count='+this.active_record_count)
+                axios.get('/users/types?page='+page+'&rec_count='+this.active_record_count)
                 .then(response=>{
                     this.user_types = response.data;
                 })
@@ -199,7 +167,7 @@
             },
             updateUserType(id){
                 this.$Progress.start();
-                this.form.post('/user_types/'+this.form.id+'/update')
+                this.form.post('/users/types/'+this.form.id+'/update')
                 .then((response)=>{
                     //create a log
                     this.$parent.createLog("Updated a record :"+response.data.original_record+":"+response.data.updated_record);
@@ -221,7 +189,7 @@
             },
             loadUserTypes(){
                 if (this.$gate.isAdmin()) {
-                   return  axios.get('user_types?rec_count='+this.active_record_count).then((resp)=>{
+                   return  axios.get('users/types?rec_count='+this.active_record_count).then((resp)=>{
                         this.user_types = resp.data;
                         this.count = resp.data.total;
                         return new Promise((resolve, reject)=>resolve(resp));
@@ -231,7 +199,7 @@
             },
             createUserType(){
                 this.$Progress.start();
-                this.form.post('user_types')
+                this.form.post('users/types')
                 .then((response)=>{
                     Fire.$emit('afterCreate');
                     //creaate a new log of this
@@ -262,7 +230,7 @@
 
                         // Send request to the server
                          if (result.value) {
-                                this.form.post('user_types/'+id+'/delete').then((resp)=>{
+                                this.form.post('users/types/'+id+'/delete').then((resp)=>{
                                     //create a log
                                     this.$parent.createLog("Deleted a record :"+resp.data.deleted_record);
                                         Swal.fire(
@@ -285,7 +253,7 @@
             });
             Fire.$on('searching:user_types',()=>{
                 let q = this.search;
-                axios.get('user_types/find?q='+q+'&rec_count='+this.active_record_count)
+                axios.get('users/types/find?q='+q+'&rec_count='+this.active_record_count)
                 .then(resp=>{
                     this.user_types = resp.data;
                     //create a log

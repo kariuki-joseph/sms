@@ -117,6 +117,10 @@ let routes = [
         component: require("./components/Profile.vue").default
     },
     { path: "/users", component: require("./components/User.vue").default },
+    {
+        path:"/users/types",
+        component: require('./components/UserTypes.vue').default
+    },
     { path: "/roles", component: require("./components/Roles.vue").default },
     {
         path: "/settings",
@@ -307,14 +311,21 @@ const app = new Vue({
         generateExcel(options) {
             const worksheet = XLSX.utils.json_to_sheet(options.data);
             const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook,worksheet,"School Management System")
-            XLSX.writeFile(workbook,options.filename || "untitled.xlsx");
+            XLSX.utils.book_append_sheet(
+                workbook,
+                worksheet,
+                "School Management System"
+            );
+            XLSX.writeFile(workbook, options.filename || "untitled.xlsx");
             console.log("Excel downladed successfully");
         },
         generateCsv(options) {
             const worksheet = XLSX.utils.json_to_sheet(options.data);
-            const csv = XLSX.utils.sheet_to_csv(worksheet,{strip:true})
-            FileSaver.saveAs(new Blob([csv], { type: "text/csv" }), options.filename || "untitled.csv");
+            const csv = XLSX.utils.sheet_to_csv(worksheet, { strip: true });
+            FileSaver.saveAs(
+                new Blob([csv], { type: "text/csv" }),
+                options.filename || "untitled.csv"
+            );
             console.log("CSV Download success");
         }
     },
