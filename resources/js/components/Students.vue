@@ -91,6 +91,10 @@
                     type="text"
                     name="name"
                     placeholder="Student's Full Names"
+                    required
+                    minlength="3"
+                    maxlength="40"
+                    autocomplete="off"
                     class="form-control"
                     :class="{ 'is-invalid': form.errors.has('name') }"
                   />
@@ -103,6 +107,7 @@
                     name="dob"
                     id=""
                     v-model="form.dob"
+                    required
                     class="form-control"
                     :class="{ 'is-invalid': form.errors.has('dob') }"
                   />
@@ -175,14 +180,18 @@
                 <div class="form-group">
                   <label for="class">Choose class to be admitted to</label>
                   <select
-                    v-model="form.class.name"
+                    v-model="form.class_id"
                     name="class"
                     id=""
                     class="form-control"
                     :class="{ 'is-invalid': form.errors.has('class.name') }"
                   >
                     <option value="">--Choose Class To Be Admitted--</option>
-                    <option v-for="_class in classes.data" :key="_class.id">
+                    <option
+                      v-for="_class in classes"
+                      :key="_class.id"
+                      :value="_class.id"
+                    >
                       {{ _class.name }}
                     </option>
                   </select>
@@ -207,6 +216,9 @@
                     v-model="form.previous_school"
                     name="previous_school"
                     placeholder="Previous School"
+                    required
+                    minlength="5"
+                    maxlength="50"
                     class="form-control"
                     :class="{
                       'is-invalid': form.errors.has('previous_school'),
@@ -225,7 +237,9 @@
                     rows="2"
                     v-model="form.location"
                     name="location"
-                    placeholder="Location"
+                    placeholder="Home Location"
+                    required
+                    maxlength="20"
                     class="form-control"
                     :class="{ 'is-invalid': form.errors.has('location') }"
                   ></textarea>
@@ -242,7 +256,7 @@
                     rows="4"
                     v-model="form.medical"
                     name="medical"
-                    placeholder="Any allergy or medical problem? State it here, briefly"
+                    placeholder="Any allergy or medical problem? State it here, briefly. Skip if none."
                     class="form-control"
                     :class="{ 'is-invalid': form.errors.has('medical') }"
                   ></textarea>
@@ -291,20 +305,18 @@
                 </div>
               </section>
 
-              <section
-                id="section_parents_father"
-                style="display: none"
-                v-if="form.parents"
-              >
+              <section id="section_parents_father" style="display: none">
                 <div class="form-group text-lg">
                   <label>Father's Information</label>
                 </div>
                 <div class="form-group">
                   <textarea
                     rows="2"
-                    v-model="form.parents.father_name"
+                    v-model="form.father_name"
                     type="text"
                     name="father_name"
+                    minlength="3"
+                    maxlength="40"
                     placeholder="Father's Name"
                     class="form-control"
                     :class="{ 'is-invalid': form.errors.has('father_name') }"
@@ -314,10 +326,12 @@
 
                 <div class="form-group">
                   <input
-                    v-model="form.parents.father_contact"
+                    v-model="form.father_contact"
                     type="tel"
                     name="father_contact"
                     placeholder="Father's Phone Number"
+                    minlength="10"
+                    maxlength="13"
                     class="form-control"
                     :class="{ 'is-invalid': form.errors.has('father_contact') }"
                   />
@@ -328,7 +342,7 @@
               <section
                 id="section_parents_mother"
                 style="display: none"
-                v-if="form.parents"
+                v-if="form"
               >
                 <div class="form-group text-lg">
                   <label for="">Mother's Information</label>
@@ -336,10 +350,12 @@
                 <div class="form-group">
                   <textarea
                     rows="2"
-                    v-model="form.parents.mother_name"
+                    v-model="form.mother_name"
                     type="text"
                     name="mother_name"
                     placeholder="Mother's Name"
+                    minlength="3"
+                    maxlength="40"
                     class="form-control"
                     :class="{ 'is-invalid': form.errors.has('mother_name') }"
                   ></textarea>
@@ -348,10 +364,12 @@
 
                 <div class="form-group">
                   <input
-                    v-model="form.parents.mother_contact"
+                    v-model="form.mother_contact"
                     type="tel"
                     name="mother_contact"
                     placeholder="Mother's Phone Number"
+                    minlength="10"
+                    maxlength="13"
                     class="form-control"
                     :class="{ 'is-invalid': form.errors.has('mother_contact') }"
                   />
@@ -362,7 +380,7 @@
               <section
                 id="section_parents_guardian"
                 style="display: none"
-                v-if="form.parents"
+                v-if="form"
               >
                 <div class="form-group text-lg">
                   <label for="">Guardian's Information</label>
@@ -370,10 +388,12 @@
                 <div class="form-group">
                   <textarea
                     rows="2"
-                    v-model="form.parents.guardian_name"
+                    v-model="form.guardian_name"
                     type="text"
                     name="guardian_name"
                     placeholder="Guardian's Name"
+                    minlength="3"
+                    maxlength="40"
                     class="form-control"
                     :class="{ 'is-invalid': form.errors.has('guardian_name') }"
                   ></textarea>
@@ -382,13 +402,15 @@
 
                 <div class="form-group">
                   <input
-                    v-model="form.parents.guardian_contact"
+                    v-model="form.guardian_contact"
                     type="tel"
                     name="guardian_contact"
                     placeholder="Guadian's Phone Number"
+                    minlength="10"
+                    maxlength="13"
                     class="form-control"
                     :class="{
-                      'is-invalid': form.errors.has('parents.guardian_contact'),
+                      'is-invalid': form.errors.has('guardian_contact'),
                     }"
                   />
                   <has-error
@@ -492,15 +514,13 @@ export default {
         admission_class: "",
         passport_photo: "",
         birth_certificate: "",
-        class: {},
-        parents: {
-          father_name: "",
-          father_contact: "",
-          mother_name: "",
-          mother_contact: "",
-          guardian_name: "",
-          guardian_contact: "",
-        },
+        class_id: "",
+        father_name: "",
+        father_contact: "",
+        mother_name: "",
+        mother_contact: "",
+        guardian_name: "",
+        guardian_contact: "",
       }),
       search: "",
       next_adm_no: "",
@@ -510,60 +530,56 @@ export default {
     };
   },
   methods: {
+    setSection(section) {
+      if (typeof section == Number) {
+        this.registration.activeSection = this.registration.sections[section];
+        return (this.registration.nextSection = this.nextSection());
+      }
+      this.registration.activeSection = section;
+      this.registration.nextSection = this.nextSection();
+    },
+    nextSection() {
+      let reg = this.registration;
+      return this.registration.sections[
+        this.registration.sections.indexOf(this.activeSection()) + 1
+      ];
+    },
+    previousSection(){
+      return this.setSection(this.registration.sections[this.registration.sections.indexOf(this.activeSection())-1])
+    },
+    activeSection() {
+      return this.registration.activeSection;
+    },
+    isLastSection() {
+      return (
+        this.activeSection() ==
+        this.registration.sections[this.registration.sections.length - 1]
+      );
+    },
+    isFirstSection() {
+      return this.registration.sections.indexOf(this.activeSection()) == 0;
+    },
+
     next() {
       //next registration section
       this.registration.isFirstSection = false;
-      if (this.registration.isFirstSection) {
-        //first page of registration
-        this.registration.activeSection = this.registration.sections[0];
-        this.registration.nextSection = this.registration.sections[1];
-      } else {
-        this.registration.activeSection =
-          this.registration.sections[
-            this.registration.sections.indexOf(
-              this.registration.activeSection
-            ) + 1
-          ];
-        this.registration.nextSection =
-          this.registration.sections[
-            this.registration.sections.indexOf(
-              this.registration.activeSection
-            ) + 1
-          ];
-        if (
-          this.registration.activeSection ==
-          this.registration.sections[this.registration.sections.length - 1]
-        ) {
-          //last page of registration
-          this.registration.isComplete = true;
-        }
-      }
-
+      this.setSection(this.nextSection());
+      //last page of registration
+      this.isLastSection() && (this.registration.isComplete = true);
       //automatically move to the next section if already in the first section
-      $("#addNew").find("section").not(this.registration.activeSection).hide();
-      $("#addNew").find(this.registration.activeSection).show();
+      $("#addNew").find("section").not(this.activeSection()).hide();
+      $("#addNew").find(this.activeSection()).show();
     },
     previous() {
       //previous registration section
+      this.previousSection();
       this.registration.isComplete = false;
-      if (
-        this.registration.sections.indexOf(this.registration.activeSection) == 0
-      ) {
-        //first page
-        this.registration.isFirstSection = true;
-        this.registration.activeSection = this.registration.sections[0];
-      } else {
-        //return previous section
-        this.registration.activeSection =
-          this.registration.sections[
-            this.registration.sections.indexOf(
-              this.registration.activeSection
-            ) - 1
-          ];
-      }
+      //first page
+      this.isFirstSection() && (this.registration.isFirstSection = true)
+        
 
-      $("#addNew").find("section").not(this.registration.activeSection).hide();
-      $("#addNew").find(this.registration.activeSection).show();
+      $("#addNew").find("section").not(this.activeSection()).hide();
+      $("#addNew").find(this.activeSection()).show();
     },
 
     generatePdf() {
@@ -627,8 +643,8 @@ export default {
         reader.readAsDataURL(file);
       }
     },
-    getAvailableClasses() {
-      axios.get("classes").then((data) => (this.classes = data.data));
+    loadClasses() {
+      axios.get("classes").then(({ data }) => (this.classes = data));
     },
     getNewAdmissionNumber() {
       axios.get("students/last-adm").then((data) => {
@@ -658,13 +674,6 @@ export default {
           this.students = response.data;
         });
     },
-    editModal(student) {
-      this.editMode = true;
-      this.form.fill(student);
-      $("#addNew").modal({
-        backdrop: "static",
-      });
-    },
     addNew() {
       this.editMode = false;
       this.form.reset();
@@ -684,6 +693,7 @@ export default {
               ":" +
               response.data.updated_record
           );
+          this.isFirstSection = true;
           $("#addNew").modal("hide");
           this.$Progress.finish();
 
@@ -697,15 +707,7 @@ export default {
     },
     loadStudents() {
       if (this.$gate.isAdmin()) {
-        // return (
-        //     axios.get('students?rec_count='+this.active_student_count).then((resp)=>{
-        //         this.students = resp.data;
-        //         this.count = resp.data.total;
-        //         return new Promise((resolve, reject)=>resolve(resp));
-        //     })),
-
-        // this.getstudentsCount(),
-        this.getNewAdmissionNumber(), this.getAvailableClasses();
+        this.getNewAdmissionNumber();
         //load students via datatables ajax
         this.dataTable ? this.dataTable.ajax.reload() : "";
       }
@@ -752,7 +754,7 @@ export default {
               this.$parent.createLog(
                 "Deleted a record :" + JSON.stringify(resp.data.deleted_record)
               );
-              Swal.fire("Deleted!", "Your file has been deleted.", "success");
+              Swal.fire("Deleted!", "Record deleted successfully.", "success");
               Fire.$emit("afterCreate:students");
             })
             .catch(() => {
@@ -763,9 +765,7 @@ export default {
     },
   },
   created() {
-    // this.$nextTick(()=>this.dataTable.ajax.url.load())
-    // console.log("datatable",this.dataTable)
-    // // this.dataTable.ajax.url('kkkdkd').load();
+    this.loadClasses();
     Fire.$on("afterCreate:students", () => {
       this.loadStudents();
     });
@@ -792,9 +792,10 @@ export default {
               name: `<a href="#/students/${student.id}/profile">${student.name}</a>`,
               adm_number: student.adm_number,
               className: student.class ? student.class.name : "Not Found",
-              modify: `<a class="btn-edit" data-info='${JSON.stringify(
-                student
-              )}'>
+              modify: `<a class="btn-edit" data-info='${JSON.stringify({
+                ...student.parents,
+                ...student,
+              })}'>
                     <i class="fa fa-edit blue"></i>
                     </a>
                         /

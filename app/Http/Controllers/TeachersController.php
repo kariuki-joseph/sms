@@ -89,8 +89,9 @@ class TeachersController extends Controller
         $original_record = $teachers->find($id)->toJson();
 
         $this->validate($request,[
-            'name'=>'required|min:3|unique:teachers,name,'.$request->id,
-            'teacher'=>'required|min:3'
+            'email'=>'required|min:3|unique:teachers,email,'.$request->id,
+            'name'=>'required|min:3',
+            'phone'=>'required|string|unique:teachers,phone,'.$request->id
         ]);
 
         $teachers->where('id', $id)->update($request->all());

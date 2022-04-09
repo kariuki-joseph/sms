@@ -6,7 +6,7 @@
             <th>Payment Type</th>
             <th>Serial No.</th>
             <th>Date Received</th>
-            <th>Subtotal</th>
+            <th>Amount</th>
             </tr>
         </thead>
         <tbody>
@@ -39,7 +39,6 @@ export default {
     },
     created(){
         this.getPayments();
-        console.log(this.adm)
     },
     mounted(){
         

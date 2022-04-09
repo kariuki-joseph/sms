@@ -51,19 +51,19 @@ class StudentsController extends Controller
     public function store(Request $request)
     {
         //student details validation
+        //more validation logic handled in the front end
         $this->validate($request,[
-            'name'=>'required|string|max:191',
-            'class.name'=>'required',
+            'name'=>'required|string|max:40',
+            'class_id'=>'required',
             'birth_cert_number'=>'required',
             'nemis_number'=>'required',
             'gender'=>'required',
             'dob'=>'required',
             'location'=>'required',
-            'previous_school'=>'required|min:5|max:191',
+            'previous_school'=>'min:5|max:50',
         ]);
         
-        $admission_class = collect($request->class)->get('name');
-        $class_id = \App\Classes::where('name','=',$admission_class)->get('id')->first()->id;
+        
         $adm_number = $this->getLastAdm();
 
         //images insert
@@ -75,11 +75,11 @@ class StudentsController extends Controller
             if(json_decode($upload)->status == 'success'){
                 $passportPhoto = $filename;
             }else{
-                $passportPhoto = "null";
+                $passportPhoto = "docs/students/passports/default.png";
             }
 
         }else{
-            $passportPhoto = "null";
+            $passportPhoto = "docs/students/passports/default.png";
         }
         //birth cert
         if($request->birth_certificate && $request->birth_certificate !="" ){
@@ -89,27 +89,27 @@ class StudentsController extends Controller
             if(json_decode($upload)->status == 'success'){
                 $birthCertificate = $filename;
             }else{
-                $birthCertificate = "null";
+                $birthCertificate = "docs/students/birth_certificates/default.pdf";
             }
         }else{
-            $birthCertificate = "null";
+            $birthCertificate = "docs/students/birth_certificates/default.pdf";
         }
 
         //into students table
         $student = new Students();
-        $student->create([
-            'adm_number'=>$adm_number,
-            'name'=>$request->name,
-            'birth_cert_number'=>$request->birth_cert_number,
-            'nemis_number'=>$request->nemis_number,
-            'medical'=>$request->medical,
-            'class_id'=>$class_id,
-            'gender'=>$request->gender,
-            'dob'=>$request->dob,
-            'location'=>$request->location,
-            'previous_school'=>$request->previous_school
-        ]);
+        $student->adm_number=$adm_number;
+        $student->name=$request->name;
+        $student->birth_cert_number=$request->birth_cert_number;
+        $student->nemis_number=$request->nemis_number;
+        $student->medical=$request->medical;
+        $student->class_id=$request->class_id;
+        $student->gender=$request->gender;
+        $student->dob=$request->dob;
+        $student->location=$request->location;
+        $student->previous_school=$request->previous_school;
+        $student->save();
         //into documents table
+        
         $student->documents()->createMany([
             [
                 'name'=>'birth_certificate',
@@ -122,12 +122,12 @@ class StudentsController extends Controller
         ]);
         //into parents table
         $student->parents()->create([
-                'mother_name'=>collect($request->parents)->get('mother_name'),
-                'mother_contact'=>collect($request->parents)->get('mother_contact'),
-                'father_name'=>collect($request->parents)->get('father_name'),
-                'father_contact'=>collect($request->parents)->get('father_contact'),
-                'guardian_name'=>collect($request->parents)->get('guardian_name'),
-                'guardian_contact'=>collect($request->parents)->get('guardian_contact')
+                'mother_name'=>$request->mother_name,
+                'mother_contact'=>$request->mother_contact,
+                'father_name'=>$request->father_name,
+                'father_contact'=>$request->father_contact,
+                'guardian_name'=>$request->guardian_name,
+                'guardian_contact'=>$request->guardian_contact
             ]);
 
      return response()->json([
@@ -161,19 +161,17 @@ class StudentsController extends Controller
         //original record
         $original_record = $student->first();
         $this->validate($request,[
-            'name'=>'required|string|max:191',
-            'adm_number'=>'integer|unique:students,adm_number,'.$request->id,
-            'class.name'=>'required',
+            'name'=>'required|string|max:40',
+            // 'adm_number'=>'integer|unique:students,adm_number,'.$request->id,
+            'class_id'=>'required',
             'gender'=>'required',
             'birth_cert_number'=>'required',
             'nemis_number'=>'required',
             'dob'=>'required',
             'location'=>'required',
-            'previous_school'=>'required|min:5|max:191',
+            'previous_school'=>'required|min:5|max:50',
         ]);
-        $class_name = collect($request->class)->get('name');
-        $class_id = \App\Classes::where('name','=',$class_name)->get('id')->first()->id;
-
+        /*
         //images insert
         $originalPassport = json_decode($original_record)->passport_photo;
         $originalBirthCertificate = json_decode($original_record)->birth_certificate;
@@ -203,30 +201,29 @@ class StudentsController extends Controller
             $birthCertificate = $originalBirthCertificate;
         }
 
+        */
         $student->update([
             'name'=>$request->name,
             'adm_number'=>$request->adm_number,
             'birth_cert_number'=>$request->birth_cert_number,
             'nemis_number'=>$request->nemis_number,
             'medical'=>$request->medical,
-            'class_id'=>$class_id,
+            'class_id'=>$request->class_id,
             'gender'=>$request->gender,
             'dob'=>$request->dob,
-            'passport_photo'=>$passportPhoto,
-            'birth_certificate'=>$birthCertificate,
             'location'=>$request->location,
             'previous_school'=>$request->previous_school
             ]);
 
              //update parents table
         $student->parents()->update([
-            'mother_name'=>collect($request->parents)->get('mother_name'),
-            'mother_contact'=>collect($request->parents)->get('mother_contact'),
-            'father_name'=>collect($request->parents)->get('father_name'),
-            'father_contact'=>collect($request->parents)->get('father_contact'),
-            'guardian_name'=>collect($request->parents)->get('guardian_name'),
-            'guardian_contact'=>collect($request->parents)->get('guardian_contact')
-            ]);
+            'mother_name'=>$request->mother_name,
+            'mother_contact'=>$request->mother_contact,
+            'father_name'=>$request->father_name,
+            'father_contact'=>$request->father_contact,
+            'guardian_name'=>$request->guardian_name,
+            'guardian_contact'=>$request->guardian_contact
+        ]);
 
         //updated record
         $updated_record = $student->first();

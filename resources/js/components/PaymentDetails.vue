@@ -26,7 +26,7 @@
                   <th>Class</th>
                   <th>Serial No.</th>
                   <th>Date Received</th>
-                  <th>Subtotal</th>
+                  <th>Amount</th>
                 </tr>
               </thead>
               <tbody></tbody>

@@ -286,11 +286,11 @@ import TableHeader from './TableHeader.vue';
                                 email: teacher.email,
                                 phone: teacher.phone,
                                 modify:`
-                                    <a @click="editModal(${teacher})">
+                                    <a class='btn-edit' data-info='${JSON.stringify(teacher)}'>
                                         <i class="fa fa-edit blue"></i>
                                     </a>
                                     /
-                                    <a @click="deleteTeacher(${teacher.id})">
+                                    <a class='btn-delete' data-info='${teacher.id}'>
                                         <i class="fa fa-trash red"></i>
                                     </a>
                                 `
@@ -307,6 +307,22 @@ import TableHeader from './TableHeader.vue';
                     {data: 'modify'}
                 ]
             })
+
+             //bind edit and delete to vue instance
+    const Parent = this;
+    $("#table_teachers tbody").on("click", "tr td a", function () {
+      if ($(this).hasClass("btn-edit")) {
+        let data = JSON.parse($(this).attr("data-info"));
+        //fill form with data and edit
+        console.log(data);
+        Parent.form.fill(data);
+        Parent.editMode = true;
+        $("#addNew").modal("show");
+      } else if ($(this).hasClass("btn-delete")) {
+        let id = $(this).attr("data-info");
+        Parent.deleteTeacher(id);
+      }
+    });
         }
 
     }

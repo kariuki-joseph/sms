@@ -17,13 +17,13 @@ class CreateStudentsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->bigInteger('class_id');
-            $table->bigInteger('birth_cert_number');
+            $table->string('birth_cert_number');
             $table->string('nemis_number');
             $table->string('adm_number');
             $table->string('gender');
             $table->string('dob');
-            $table->string('previous_school');
-            $table->string('medical');
+            $table->string('previous_school')->nullable();
+            $table->string('medical')->nullable();
             $table->string('location');
             $table->timestamps();
         });

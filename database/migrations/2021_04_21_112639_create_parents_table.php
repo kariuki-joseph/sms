@@ -17,11 +17,11 @@ class CreateParentsTable extends Migration
             $table->bigIncrements('id');
             $table->bigInteger('student_id');
             $table->string('mother_name')->default('NULL');
-            $table->bigInteger('mother_contact')->nullabe();
+            $table->string('mother_contact')->nullable();
             $table->string('father_name')->default('NULL');
-            $table->bigInteger('father_contact')->nullabe();
+            $table->string('father_contact')->nullable();
             $table->string('guardian_name')->default('NULL');
-            $table->bigInteger('guardian_contact')->nullabe();
+            $table->string('guardian_contact')->nullable();
             $table->timestamps();
         });
     }
