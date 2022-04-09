@@ -14,7 +14,7 @@ class UserTypeController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request){
-        return UserType::latest()->get();
+        return UserType::latest()->paginate(UserType::count());
     }
 
     /**

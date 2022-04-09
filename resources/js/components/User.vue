@@ -33,7 +33,7 @@
                         <td>{{ user.id}}</td>
                         <td>{{user.name}}</td>
                         <td>{{user.email}}</td>
-                        <td>{{user.type | upText}}</td>
+                        <td>{{user.user_type | upText}}</td>
                         <td>{{user.created_at|myDate }}</td>
 
                         <td>
@@ -160,7 +160,7 @@
             },
             getUserTypes(){
                 axios.get('users/types').then(({data})=>{
-                    this.user_types = data
+                    this.user_types = data.data
                 })
             },
             getRecordsCount(){

@@ -131,7 +131,10 @@ class UserController extends Controller
             'password'=>'sometimes|min:6'
         ]);
 
-        $user->update($request->all());
+        $user->name = $request->name;
+        $user->email= $request->email;
+        $user->user_type = $request->user_type;
+        $user->save();
 
         return ['message'=>'Info updated successfully.'];
     }
