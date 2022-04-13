@@ -201,6 +201,6 @@ Route::get('fees/{id}', 'FeesController@show');
 Route::post('fees/{id}/update','FeesController@edit');
 Route::post('fees/{id}/delete', 'FeesController@destroy');
 
-Route::post('uploads', 'UploadsController@index');
+Route::post('uploads', 'UploadsController@store');
 
 Route::post('logs', 'LogsController@store');
