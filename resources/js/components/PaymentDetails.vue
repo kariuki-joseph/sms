@@ -45,6 +45,7 @@
 </template>
 
 <script>
+import { format } from 'date-fns';
 export default {
   data() {
     return {
@@ -73,6 +74,10 @@ export default {
   },
   created() {},
   mounted() {
+    const formatPaymentDate = (date)=>{
+      return format(new Date(date),'iii, dd/MM/yyyy p')
+    }
+
     this.dataTable = $("#table_payment_details").DataTable({
       processing: true,
       retrieve: true,
@@ -96,7 +101,7 @@ export default {
               admNo: fees.student.adm_number,
               className: fees.student.class.name,
               serialNo: fees.id,
-              dateReceived: fees.created_at,
+              dateReceived: formatPaymentDate(fees.created_at),
               amount: fees.amount,
             });
           }

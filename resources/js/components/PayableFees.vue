@@ -5,7 +5,7 @@
         <div class="card">
                <div class="card-header">
                   <table-header 
-                     :title="`${ count } payable(s) records}`" 
+                     :title="`${ count } payable fees record(s)`" 
                      :icon="`fas fa-school fa-fw`" 
                      :icon_text="'Add New'"
                      @openModal="addNew()"

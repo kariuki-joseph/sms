@@ -49143,10 +49143,13 @@ a.text-dark:focus {
   }
 }
 
-.router-link-exact-active,
 .router-link-active {
-  background-color: red;
-  color: #fff !important;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.router-link-exact-active {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #ff7979 !important;
 }
 
 .passport-photo img {

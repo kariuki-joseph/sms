@@ -52,8 +52,7 @@ class StudentsController extends Controller
             'nemis_number'=>'required',
             'gender'=>'required',
             'dob'=>'required',
-            'location'=>'required',
-            'previous_school'=>'min:5|max:50',
+            'location'=>'required'
         ]);
         
         
@@ -136,9 +135,9 @@ class StudentsController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($adm)
     {
-        return Students::with(['class', 'parents', 'documents'])->find($id);
+        return Students::with(['class', 'parents', 'documents'])->where('adm_number',$adm)->first();
     }
 
     /**

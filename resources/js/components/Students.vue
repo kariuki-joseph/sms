@@ -21,7 +21,6 @@
             >
               <thead>
                 <tr>
-                  <th>ID</th>
                   <th>Student Name</th>
                   <th>Admission Number</th>
                   <th>Class</th>
@@ -136,10 +135,11 @@
                     justjsify-content-around
                   "
                 >
-                  <label for="gender">
+                  <label for="male">
                     <input
                       type="radio"
                       name="gender"
+                      id="male"
                       v-model="form.gender"
                       value="Male"
                       checked="true"
@@ -147,11 +147,12 @@
                     />Male
                     <has-error :form="form" field="gender"></has-error> </label
                   >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-                  <label for="gender">
+                  <label for="female">
                     <input
                       type="radio"
                       name="gender"
                       v-model="form.gender"
+                      id="female"
                       value="Female"
                       :class="{ 'is-invalid': form.errors.has('gender') }"
                     />Female
@@ -215,8 +216,8 @@
                     rows="2"
                     v-model="form.previous_school"
                     name="previous_school"
-                    placeholder="Previous School"
-                    required
+                    placeholder="Previous School (if any)"
+                    
                     minlength="5"
                     maxlength="50"
                     class="form-control"
@@ -788,8 +789,7 @@ export default {
           for (i = 0; i < data.length; i++) {
             student = data[i];
             resp.push({
-              id: student.id,
-              name: `<a href="#/students/${student.id}/profile">${student.name}</a>`,
+              name: `<a href="#/students/${student.adm_number}/profile">${student.name}</a>`,
               adm_number: student.adm_number,
               className: student.class ? student.class.name : "Not Found",
               modify: `<a class="btn-edit" data-info='${JSON.stringify({
@@ -808,7 +808,6 @@ export default {
         },
       },
       columns: [
-        { data: "id" },
         { data: "name" },
         { data: "adm_number" },
         { data: "className" },

@@ -12,7 +12,7 @@ class FeesController extends Controller
 {
     //
     public function index(){
-        $fees = Fees::with('student.class:id,name')->with('payable:id,name,amount')->latest()->paginate(Fees::count());
+        $fees = Fees::with(['student','student.class'])->with('payable:id,name,amount')->latest()->paginate(Fees::count());
         return $fees;
     }
 

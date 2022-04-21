@@ -17,9 +17,9 @@ class CreateStudentsTable extends Migration
             $table->bigIncrements('id');
             $table->string('name');
             $table->bigInteger('class_id');
-            $table->string('birth_cert_number');
-            $table->string('nemis_number');
-            $table->string('adm_number');
+            $table->string('birth_cert_number')->unique();
+            $table->string('nemis_number')->nullable();
+            $table->string('adm_number')->unique();
             $table->string('gender');
             $table->string('dob');
             $table->string('previous_school')->nullable();

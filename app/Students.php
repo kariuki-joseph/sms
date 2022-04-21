@@ -14,7 +14,7 @@ class Students extends Model
 
     public function class()
     {
-        return $this->hasOne(Classes::class, 'id', 'class_id');
+        return $this->hasOne(Classes::class,'id','class_id');
     }
 
     public function logs()

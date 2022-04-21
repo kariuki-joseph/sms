@@ -46,9 +46,9 @@ Vue.component(AlertError.name, AlertError);
 Vue.component("pagination", require("laravel-vue-pagination"));
 
 Vue.filter("upText", text => {
-    return text == null || undefined || ""
-        ? ""
-        : text.charAt(0).toUpperCase() + text.slice(1);
+    return text == null || undefined || "" ?
+        "" :
+        text.charAt(0).toUpperCase() + text.slice(1);
 });
 Vue.filter("myDate", date => {
     return moment(date).format("MMMM Do YYYY");
@@ -118,8 +118,8 @@ let routes = [
     },
     { path: "/users", component: require("./components/User.vue").default },
     {
-        path:"/users/types",
-        component: require('./components/UserTypes.vue').default
+        path: "/users/types",
+        component: require("./components/UserTypes.vue").default
     },
     { path: "/roles", component: require("./components/Roles.vue").default },
     {
@@ -144,8 +144,18 @@ let routes = [
         path: "/uploads",
         component: require("./components/Uploads.vue").default
     },
-    { path: "/fees", component: require("./components/Fees.vue").default },
-    { path: "*", component: require("./components/NotFound.vue").default }
+    {
+        path: "/fees",
+        component: require("./components/Fees.vue").default
+    },
+    {
+        path: "/fees/payable",
+        component: require("./components/PayableFees.vue").default
+    },
+    {
+        path: "*",
+        component: require("./components/NotFound.vue").default
+    }
 ];
 const toast = swal.mixin({
     toast: true,
@@ -184,7 +194,6 @@ const app = new Vue({
     el: "#app",
     router,
     data: {
-        records: [10, 5, 20, 30, 40, 50, 60, 70, 80, 90, 100, 200],
         logs: {
             create: "Created a record",
             update: "Updated a record in",
@@ -199,9 +208,9 @@ const app = new Vue({
             fd.append("activity", activity);
 
             fetch("logs", {
-                method: "POST",
-                body: fd
-            })
+                    method: "POST",
+                    body: fd
+                })
                 .then(response => response.json())
                 .then(response => {
                     console.log(response);
@@ -249,10 +258,8 @@ const app = new Vue({
                 header: {
                     //header part
                 },
-                content: [
-                    {
-                        stack: [
-                            {
+                content: [{
+                        stack: [{
                                 image: this.settings.logo,
                                 width: 100,
                                 height: 100,
@@ -261,11 +268,6 @@ const app = new Vue({
                             {
                                 text: this.settings.sch_name.toUpperCase(),
                                 style: ["mainHeadings"]
-                            },
-                            {
-                                text:
-                                    "OFFICE OF THE REGISTRAR ACADEMIC AFFAIRS AND RESEARCH",
-                                style: "mainHeadings"
                             },
                             {
                                 text: this.settings.po_address,
@@ -288,9 +290,8 @@ const app = new Vue({
                         }
                     }
                 ],
-                footer: [
-                    {
-                        text: `${this.settings.sch_name
+                footer: [{
+                    text: `${this.settings.sch_name
                             .split(" ")
                             .map(
                                 name =>
@@ -298,9 +299,8 @@ const app = new Vue({
                                     name.substr(1, name.length)
                             )
                             .join(" ")} - ${this.settings.sch_motto}`,
-                        style: "footer"
-                    }
-                ]
+                    style: "footer"
+                }]
             };
             //make the pdf document
             pdfMake
@@ -311,11 +311,13 @@ const app = new Vue({
         generateExcel(options) {
             const worksheet = XLSX.utils.json_to_sheet(options.data);
             const workbook = XLSX.utils.book_new();
+
             XLSX.utils.book_append_sheet(
                 workbook,
                 worksheet,
                 "School Management System"
             );
+
             XLSX.writeFile(workbook, options.filename || "untitled.xlsx");
             console.log("Excel downladed successfully");
         },

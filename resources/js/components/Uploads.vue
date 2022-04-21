@@ -20,11 +20,13 @@
                   @change="filterUserTypes"
                   name="user_type"
                   id="user_type"
-                  class="form-control"
+                  class="custom-select"
                   :class="{ 'is-invalid': form.errors.has('user_type') }"
                 >
                   <option selected>--Select User Category--</option>
-                  <option v-for="user_type in user_types" :key="user_type.id">
+                  <option 
+                  v-for="user_type in user_types"
+                  :key="user_type.id">
                     {{ user_type.name }}
                   </option>
                 </select>
